@@ -3,4 +3,12 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="transparent">#0000</color>
+    <color name="black">#000</color>
+    <color name="blue">#6dcbed</color>
+    <color name="white">#FFFF</color>
+    <!--灰色背景白底色-->
+    <color name="bg_white">#dcdcdc</color>
+    <!--分割线-->
+    <color name="split_gray">#d9d9d9</color>
 </resources>
