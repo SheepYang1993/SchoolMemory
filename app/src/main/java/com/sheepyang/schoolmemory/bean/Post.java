@@ -10,7 +10,6 @@ import cn.bmob.v3.BmobObject;
  */
 public class Post extends BmobObject {
     private MyUser author;//作者
-    private String authorAvatar;//作者头像
     private String contentImg;//帖子图片
     private String content;//帖子内容
     private List<MyUser> likesList;//点赞用户列表
@@ -21,14 +20,6 @@ public class Post extends BmobObject {
 
     public void setAuthor(MyUser author) {
         this.author = author;
-    }
-
-    public String getAuthorAvatar() {
-        return authorAvatar;
-    }
-
-    public void setAuthorAvatar(String authorAvatar) {
-        this.authorAvatar = authorAvatar;
     }
 
     public String getContentImg() {

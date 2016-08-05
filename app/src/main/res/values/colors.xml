@@ -1,14 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorPrimary">#6dcbed</color>
+    <color name="colorPrimaryDark">#1D2E7A</color>
+    <color name="colorAccent">#77d7fa</color>
     <color name="transparent">#0000</color>
     <color name="black">#000</color>
     <color name="blue">#6dcbed</color>
+    <color name="blue_dark">#45a8ed</color>
     <color name="white">#FFFF</color>
     <!--灰色背景白底色-->
     <color name="bg_white">#dcdcdc</color>
     <!--分割线-->
     <color name="split_gray">#d9d9d9</color>
+    <!--字黑色-->
+    <color name="word_black">#323232</color>
+    <!--字淡黑色-->
+    <color name="word_black_dark">#646464</color>
+    <!--字灰色-->
+    <color name="word_gary">#909090</color>
 </resources>

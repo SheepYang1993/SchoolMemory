@@ -8,6 +8,7 @@ import com.sheepyang.schoolmemory.adapter.PostAdapter;
 import com.sheepyang.schoolmemory.bean.Post;
 import com.sheepyang.schoolmemory.view.abView.AbPullToRefreshView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -22,6 +23,8 @@ public class MainActivity extends BaseActivity {
 
     private List<Post> mPostList;
     private PostAdapter postAdapter;
+    private int mCurrentPage = 0;//当前页数
+    private int mSize = 5;//页数大小
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,17 +54,23 @@ public class MainActivity extends BaseActivity {
     }
 
     private void getMoreData() {
-
+        mCurrentPage++;
+        getDataTest(mCurrentPage, mSize);
     }
 
     private void initData() {
-        mPostList = getData();
+        mCurrentPage = 0;
+        mPostList = getDataTest(mCurrentPage, mSize);
         postAdapter = new PostAdapter(this, mPostList);
         lvPost.setAdapter(postAdapter);
     }
 
-    private List<Post> getData() {
-
+    private List<Post> getDataTest(int currentPage, int size) {
+        List<Post> postList = new ArrayList<Post>();
+        for (int i = 0; i < size; i++) {
+            Post post = new Post();
+//            post.setAuthor();
+        }
         return null;
     }
 

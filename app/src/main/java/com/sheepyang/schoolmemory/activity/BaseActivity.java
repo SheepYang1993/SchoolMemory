@@ -1,5 +1,6 @@
 package com.sheepyang.schoolmemory.activity;
 
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -11,6 +12,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.sheepyang.schoolmemory.R;
+import com.sheepyang.schoolmemory.receiver.ExitAppReceiver;
+import com.sheepyang.schoolmemory.util.Constant;
 import com.sheepyang.schoolmemory.util.MyToast;
 import com.sheepyang.schoolmemory.view.dialog.CustomProgressDialog;
 
@@ -18,19 +21,39 @@ import com.sheepyang.schoolmemory.view.dialog.CustomProgressDialog;
 /**
  * 基类
  */
-public class BaseActivity extends AppCompatActivity {
+public class BaseActivity extends AppCompatActivity implements View.OnClickListener {
+    private ExitAppReceiver exitReceiver = new ExitAppReceiver();
+    //自定义退出应用Action,实际应用中应该放到整个应用的Constant类中.
     public CustomProgressDialog mProgressDialog;
     public ActionBar mActionBar;
     ImageView mBarIvBack;
     TextView mBarTvRight;
     ImageView mBarIvRight;
     TextView mBarTvTitle;
+    private long mCurrentTime = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        registerExitReceiver();//注册退出登录广播
         mProgressDialog = new CustomProgressDialog(this, "loading");
         initActionbar();
+    }
+
+    private void registerExitReceiver() {
+        IntentFilter exitFilter = new IntentFilter();
+        exitFilter.addAction(Constant.EXIT_APP_ACTION);
+        registerReceiver(exitReceiver, exitFilter);
+    }
+
+    private void unregisterExitReceiver() {
+        unregisterReceiver(exitReceiver);
+    }
+
+    @Override
+    protected void onDestroy() {
+        unregisterExitReceiver();//注销退出登录广播
+        super.onDestroy();
     }
 
     /**
@@ -130,6 +153,31 @@ public class BaseActivity extends AppCompatActivity {
     public void showToast(String msg) {
         if (!this.isFinishing()) {
             MyToast.showMessage(this, msg);
+        }
+    }
+
+    /**
+     * 双击标题栏
+     */
+    public void onDoubleClick() {
+
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.ivBack:
+                onBackPressed();
+                break;
+            case R.id.tvTitle:
+                if (System.currentTimeMillis() - mCurrentTime < 500) {
+                    mCurrentTime = 0;
+                    onDoubleClick();
+                }
+                mCurrentTime = System.currentTimeMillis();
+                break;
+            default:
+                break;
         }
     }
 }

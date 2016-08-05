@@ -63,13 +63,16 @@ public class PostAdapter extends BaseAdapter {
         } else {
             vh = (ViewHolder) convertView.getTag();
         }
-        vh.tvName.setText(post.getAuthor().getUsername());
+        vh.tvName.setText(post.getAuthor().getNick());
         vh.tvContent.setText(post.getContent());
         List<MyUser> likesList = post.getLikesList();
         String likes = "";
         for (int i = 0; i < likesList.size(); i++) {
+            if (!TextUtils.isEmpty(likes)) {
+                likes += "、";
+            }
             MyUser user = likesList.get(i);
-            likes += user.getUsername();
+            likes += user.getNick();
         }
         if (TextUtils.isEmpty(likes)) {
             vh.tvThumbName.setVisibility(View.INVISIBLE);
