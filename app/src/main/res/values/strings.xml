@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">校园纪念册</string>
+    <string name="drawer_open">打开菜单</string>
+    <string name="drawer_close">关闭菜单</string>
 </resources>

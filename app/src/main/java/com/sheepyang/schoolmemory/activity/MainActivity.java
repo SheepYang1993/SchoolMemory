@@ -1,11 +1,18 @@
 package com.sheepyang.schoolmemory.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.widget.DrawerLayout;
+import android.view.View;
 import android.widget.ListView;
 
 import com.sheepyang.schoolmemory.R;
 import com.sheepyang.schoolmemory.adapter.PostAdapter;
+import com.sheepyang.schoolmemory.bean.MyUser;
 import com.sheepyang.schoolmemory.bean.Post;
+import com.sheepyang.schoolmemory.util.Constant;
+import com.sheepyang.schoolmemory.util.PLog;
 import com.sheepyang.schoolmemory.view.abView.AbPullToRefreshView;
 
 import java.util.ArrayList;
@@ -16,6 +23,8 @@ import butterknife.ButterKnife;
 
 public class MainActivity extends BaseActivity {
 
+    @BindView(R.id.drawerLayout)
+    DrawerLayout mDrawerLayout;
     @BindView(R.id.lvPost)
     ListView lvPost;
     @BindView(R.id.abPullToRefresh)
@@ -69,15 +78,58 @@ public class MainActivity extends BaseActivity {
         List<Post> postList = new ArrayList<Post>();
         for (int i = 0; i < size; i++) {
             Post post = new Post();
-//            post.setAuthor();
+//            post.setAuthor(MyUser.getCurrentUser());
         }
         return null;
+    }
+
+    @Override
+    public void initActionbar() {
+        super.initActionbar();
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this,                  /* host Activity */
+                mDrawerLayout,         /* DrawerLayout object */
+                R.drawable.login_logo,  /* nav drawer image to replace 'Up' caret */
+                R.string.drawer_open,  /* "open drawer" description for accessibility */
+                R.string.drawer_close  /* "close drawer" description for accessibility */
+        ) {
+            public void onDrawerClosed(View view) {
+                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+            }
+
+            public void onDrawerOpened(View drawerView) {
+                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+            }
+        };
+        mDrawerLayout.setDrawerListener(toggle);
     }
 
     private void initView() {
         setNoLast();
         setNoBack();
+        setBackIv(R.drawable.menu);
     }
 
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.ivBack:
+                showToast("显示侧滑菜单");
+                break;
+        }
+    }
 
+    @Override
+    public void onBackPressed() {
+        if (System.currentTimeMillis() - mCurrentTime < 2000) {
+            mCurrentTime = 0;
+            mIntent = new Intent();
+            mIntent.setAction(Constant.EXIT_APP_ACTION);
+            mIntent.putExtra("isLogOut", true);
+            sendBroadcast(mIntent);
+        } else {
+            mCurrentTime = System.currentTimeMillis();
+            showToast("再次点击退出APP");
+        }
+    }
 }

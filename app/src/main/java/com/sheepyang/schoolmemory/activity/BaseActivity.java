@@ -1,5 +1,6 @@
 package com.sheepyang.schoolmemory.activity;
 
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
@@ -13,53 +14,62 @@ import android.widget.TextView;
 
 import com.sheepyang.schoolmemory.R;
 import com.sheepyang.schoolmemory.receiver.ExitAppReceiver;
+import com.sheepyang.schoolmemory.receiver.ExitUIReceiver;
 import com.sheepyang.schoolmemory.util.Constant;
 import com.sheepyang.schoolmemory.util.MyToast;
 import com.sheepyang.schoolmemory.view.dialog.CustomProgressDialog;
+
+import butterknife.ButterKnife;
 
 
 /**
  * 基类
  */
 public class BaseActivity extends AppCompatActivity implements View.OnClickListener {
-    private ExitAppReceiver exitReceiver = new ExitAppReceiver();
-    //自定义退出应用Action,实际应用中应该放到整个应用的Constant类中.
-    public CustomProgressDialog mProgressDialog;
+    private ExitAppReceiver exitAppReceiver = new ExitAppReceiver();
+    private ExitUIReceiver exitUIReceiver = new ExitUIReceiver();
+    public CustomProgressDialog mLoadingPD;
     public ActionBar mActionBar;
+    public Intent mIntent;
     ImageView mBarIvBack;
     TextView mBarTvRight;
     ImageView mBarIvRight;
     TextView mBarTvTitle;
-    private long mCurrentTime = 0;
+    public long mCurrentTime = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        registerExitReceiver();//注册退出登录广播
-        mProgressDialog = new CustomProgressDialog(this, "loading");
+        registerReceiver();//注册广播
+        mLoadingPD = new CustomProgressDialog(this, "loading");
         initActionbar();
     }
 
-    private void registerExitReceiver() {
-        IntentFilter exitFilter = new IntentFilter();
-        exitFilter.addAction(Constant.EXIT_APP_ACTION);
-        registerReceiver(exitReceiver, exitFilter);
+    private void registerReceiver() {
+        IntentFilter exitUIFilter = new IntentFilter();
+        exitUIFilter.addAction(Constant.EXIT_UI_ACTION);
+        registerReceiver(exitUIReceiver, exitUIFilter);
+
+        IntentFilter exitAppFilter = new IntentFilter();
+        exitAppFilter.addAction(Constant.EXIT_APP_ACTION);
+        registerReceiver(exitAppReceiver, exitAppFilter);
     }
 
-    private void unregisterExitReceiver() {
-        unregisterReceiver(exitReceiver);
+    private void unregisterReceiver() {
+        unregisterReceiver(exitUIReceiver);
+        unregisterReceiver(exitAppReceiver);
     }
 
     @Override
     protected void onDestroy() {
-        unregisterExitReceiver();//注销退出登录广播
+        unregisterReceiver();//注销广播
         super.onDestroy();
     }
 
     /**
      * 初始化标签
      */
-    private void initActionbar() {
+    public void initActionbar() {
         View view = LayoutInflater.from(this).inflate(R.layout.actionbar_view, null);
         ActionBar.LayoutParams layoutParams = new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.MATCH_PARENT);
         layoutParams.gravity = Gravity.CENTER_HORIZONTAL;
@@ -76,12 +86,7 @@ public class BaseActivity extends AppCompatActivity implements View.OnClickListe
         mBarIvRight = (ImageView) findViewById(R.id.ivRight);
         mBarTvRight = (TextView) findViewById(R.id.tvRight);
         mBarTvTitle = (TextView) findViewById(R.id.tvTitle);
-        mBarIvBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        mBarIvBack.setOnClickListener(this);
     }
 
     /**
@@ -133,6 +138,16 @@ public class BaseActivity extends AppCompatActivity implements View.OnClickListe
         mBarTvRight.setVisibility(View.GONE);
         mBarIvRight.setVisibility(View.VISIBLE);
         mBarIvRight.setImageResource(resId);
+    }
+
+    /**
+     * 设置返回键图标
+     *
+     * @param resId 图标资源id
+     */
+    public void setBackIv(int resId) {
+        mBarIvBack.setVisibility(View.VISIBLE);
+        mBarIvBack.setImageResource(resId);
     }
 
     public void setNoLast() {

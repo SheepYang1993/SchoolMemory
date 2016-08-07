@@ -5,6 +5,9 @@ import android.os.Bundle;
 import android.os.Handler;
 
 import com.sheepyang.schoolmemory.R;
+import com.sheepyang.schoolmemory.activity.login.LoginActivity;
+
+import cn.bmob.v3.BmobUser;
 
 
 public class FirstActivity extends BaseActivity {
@@ -24,12 +27,15 @@ public class FirstActivity extends BaseActivity {
 
         @Override
         public void run() {
-
-            Intent intent = new Intent(FirstActivity.this, MainActivity.class);
-            intent.putExtra("fromFirst", true);// 我的页面判断是否从这个页面进去的
-            startActivity(intent);
+            if (BmobUser.getCurrentUser() == null) {
+                mIntent = new Intent(FirstActivity.this, LoginActivity.class);
+                mIntent.putExtra("fromFirst", true);// 我的页面判断是否从这个页面进去的
+            } else {
+                mIntent = new Intent(FirstActivity.this, MainActivity.class);
+                mIntent.putExtra("fromFirst", true);// 我的页面判断是否从这个页面进去的
+            }
+            startActivity(mIntent);
             finish();
-
         }
     };
 }

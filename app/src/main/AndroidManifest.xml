@@ -18,19 +18,28 @@
     <application
         android:name=".MyApplication"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/login_logo"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activity.FirstActivity"></activity>
-        <activity android:name=".activity.MainActivity" />
-        <activity android:name=".activity.login.LoginActivity">
+        <!--欢迎界面-->
+        <activity android:name=".activity.FirstActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <!--主界面-->
+        <activity android:name=".activity.MainActivity" />
+        <!--登录界面-->
+        <activity android:name=".activity.login.LoginActivity" />
+        <!--注册界面-->
+        <activity android:name=".activity.login.RegistActivity" />
+        <!--忘记密码界面-->
+        <activity android:name=".activity.login.ForgetPasswordActivity" />
+        <!--重置密码界面-->
+        <activity android:name=".activity.login.ResetPasswordActivity" />
     </application>
 
 </manifest>

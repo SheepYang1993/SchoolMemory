@@ -80,6 +80,15 @@ public class PLog {
     /**
      * info日志
      *
+     * @param message
+     */
+    public static void i(String message) {
+        Log.i(defaultTag, message);
+    }
+
+    /**
+     * info日志
+     *
      * @param tag
      * @param message
      */

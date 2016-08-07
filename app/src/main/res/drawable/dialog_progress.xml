@@ -2,7 +2,7 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:innerRadius="15dp"
     android:shape="ring"
-    android:thickness="5dp"
+    android:thickness="2dp"
     android:useLevel="false">
     <!-- 渐变 -->
     <gradient

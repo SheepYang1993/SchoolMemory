@@ -24,9 +24,8 @@ public class ExitAppReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         if (context != null) {
-            if (!intent.getBooleanExtra("isLogOut", false)) {
+            if (intent.getBooleanExtra("isLogOut", false)) {
                 BmobUser.logOut();   //清除缓存用户对象
-                BmobUser currentUser = BmobUser.getCurrentUser(); // 现在的currentUser是null了
             }
             if (context instanceof Activity) {
                 ((Activity) context).finish();
