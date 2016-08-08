@@ -7,9 +7,9 @@ import android.widget.LinearLayout;
 
 /**
  * 当slideMenu打开的时候，拦截并消费掉触摸事件
- * 
+ *
  * @author Administrator
- * 
+ *
  */
 public class MyLinearLayout extends LinearLayout {
 	public MyLinearLayout(Context context, AttributeSet attrs, int defStyle) {
@@ -42,7 +42,6 @@ public class MyLinearLayout extends LinearLayout {
 				//抬起则应该关闭slideMenu
 				slideMenu.close();
 			}
-			
 			//如果slideMenu打开则应该拦截并消费掉事件
 			return true;
 		}

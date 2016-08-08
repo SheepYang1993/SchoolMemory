@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.sheepyang.schoolmemory.R;
 import com.sheepyang.schoolmemory.bean.MyUser;
 import com.sheepyang.schoolmemory.bean.Post;
@@ -64,15 +65,22 @@ public class PostAdapter extends BaseAdapter {
             vh = (ViewHolder) convertView.getTag();
         }
         vh.tvName.setText(post.getAuthor().getNick());
+        Glide.with(mContext.getApplicationContext())
+                .load(post.getContentImg())
+                .fitCenter()
+                .crossFade()
+                .into(vh.ivContentImg);
         vh.tvContent.setText(post.getContent());
         List<MyUser> likesList = post.getLikesList();
         String likes = "";
-        for (int i = 0; i < likesList.size(); i++) {
-            if (!TextUtils.isEmpty(likes)) {
-                likes += "、";
+        if (likesList != null && likesList.size() > 0) {
+            for (int i = 0; i < likesList.size(); i++) {
+                if (!TextUtils.isEmpty(likes)) {
+                    likes += "、";
+                }
+                MyUser user = likesList.get(i);
+                likes += user.getNick();
             }
-            MyUser user = likesList.get(i);
-            likes += user.getNick();
         }
         if (TextUtils.isEmpty(likes)) {
             vh.tvThumbName.setVisibility(View.INVISIBLE);

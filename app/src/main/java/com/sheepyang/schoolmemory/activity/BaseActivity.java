@@ -17,6 +17,7 @@ import com.sheepyang.schoolmemory.receiver.ExitAppReceiver;
 import com.sheepyang.schoolmemory.receiver.ExitUIReceiver;
 import com.sheepyang.schoolmemory.util.Constant;
 import com.sheepyang.schoolmemory.util.MyToast;
+import com.sheepyang.schoolmemory.util.PLog;
 import com.sheepyang.schoolmemory.view.dialog.CustomProgressDialog;
 
 import butterknife.ButterKnife;
@@ -86,6 +87,9 @@ public class BaseActivity extends AppCompatActivity implements View.OnClickListe
         mBarIvRight = (ImageView) findViewById(R.id.ivRight);
         mBarTvRight = (TextView) findViewById(R.id.tvRight);
         mBarTvTitle = (TextView) findViewById(R.id.tvTitle);
+        mBarIvRight.setOnClickListener(this);
+        mBarTvRight.setOnClickListener(this);
+        mBarTvTitle.setOnClickListener(this);
         mBarIvBack.setOnClickListener(this);
     }
 
@@ -175,7 +179,7 @@ public class BaseActivity extends AppCompatActivity implements View.OnClickListe
      * 双击标题栏
      */
     public void onDoubleClick() {
-
+        PLog.i("双击标题栏");
     }
 
     @Override
@@ -185,6 +189,7 @@ public class BaseActivity extends AppCompatActivity implements View.OnClickListe
                 onBackPressed();
                 break;
             case R.id.tvTitle:
+                PLog.i(System.currentTimeMillis() - mCurrentTime + "");
                 if (System.currentTimeMillis() - mCurrentTime < 500) {
                     mCurrentTime = 0;
                     onDoubleClick();

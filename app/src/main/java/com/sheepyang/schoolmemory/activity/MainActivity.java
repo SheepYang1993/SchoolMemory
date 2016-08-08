@@ -7,6 +7,7 @@ import android.widget.ListView;
 
 import com.sheepyang.schoolmemory.R;
 import com.sheepyang.schoolmemory.adapter.PostAdapter;
+import com.sheepyang.schoolmemory.bean.MyUser;
 import com.sheepyang.schoolmemory.bean.Post;
 import com.sheepyang.schoolmemory.util.Constant;
 import com.sheepyang.schoolmemory.view.MyLinearLayout;
@@ -52,6 +53,7 @@ public class MainActivity extends BaseActivity {
     }
 
     private void initEvent() {
+        mllMain.setSlideMenu(slideMenu);
         //下拉刷新
         abPullToRefresh.setOnHeaderRefreshListener(new AbPullToRefreshView.OnHeaderRefreshListener() {
             @Override
@@ -86,7 +88,15 @@ public class MainActivity extends BaseActivity {
 
     private void getMoreData() {
         mCurrentPage++;
-        getDataTest(mCurrentPage, mSize);
+        mPostList.addAll(getDataTest(mCurrentPage, mSize));
+        postAdapter.upDataList(mPostList);
+        abPullToRefresh.onFooterLoadFinish();
+    }
+
+    @Override
+    public void onDoubleClick() {
+        super.onDoubleClick();
+        lvPost.smoothScrollToPositionFromTop(0, 0);
     }
 
     private void initData() {
@@ -94,15 +104,19 @@ public class MainActivity extends BaseActivity {
         mPostList = getDataTest(mCurrentPage, mSize);
         postAdapter = new PostAdapter(this, mPostList);
         lvPost.setAdapter(postAdapter);
+        abPullToRefresh.onHeaderRefreshFinish();
     }
 
     private List<Post> getDataTest(int currentPage, int size) {
         List<Post> postList = new ArrayList<Post>();
         for (int i = 0; i < size; i++) {
             Post post = new Post();
-//            post.setAuthor(MyUser.getCurrentUser());
+            post.setAuthor(MyUser.getCurrentUser(MyUser.class));
+            post.setContent("第" + (currentPage + 1) + "页，" + "第" + (i + 1) + "条数据");
+            post.setContentImg("http://b.hiphotos.baidu.com/image/pic/item/fd039245d688d43f76b17dd4781ed21b0ef43bf8.jpg");
+            postList.add(post);
         }
-        return null;
+        return postList;
     }
 
     private void initView() {
