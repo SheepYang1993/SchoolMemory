@@ -10,8 +10,6 @@ import com.sheepyang.schoolmemory.adapter.PostAdapter;
 import com.sheepyang.schoolmemory.bean.MyUser;
 import com.sheepyang.schoolmemory.bean.Post;
 import com.sheepyang.schoolmemory.util.Constant;
-import com.sheepyang.schoolmemory.view.MyLinearLayout;
-import com.sheepyang.schoolmemory.view.SlideMenu;
 import com.sheepyang.schoolmemory.view.abView.AbPullToRefreshView;
 
 import java.util.ArrayList;
@@ -19,7 +17,6 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends BaseActivity {
 
@@ -27,20 +24,11 @@ public class MainActivity extends BaseActivity {
     ListView lvPost;
     @BindView(R.id.abPullToRefresh)
     AbPullToRefreshView abPullToRefresh;
-    @BindView(R.id.civAvatar)
-    CircleImageView civAvatar;
-    @BindView(R.id.lvMenu)
-    ListView lvMenu;
-    @BindView(R.id.mllMain)
-    MyLinearLayout mllMain;
-    @BindView(R.id.slideMenu)
-    SlideMenu slideMenu;
 
     private List<Post> mPostList;
     private PostAdapter postAdapter;
     private int mCurrentPage = 0;//当前页数
     private int mSize = 5;//页数大小
-    private boolean isSlidingMenuOpen = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +41,6 @@ public class MainActivity extends BaseActivity {
     }
 
     private void initEvent() {
-        mllMain.setSlideMenu(slideMenu);
         //下拉刷新
         abPullToRefresh.setOnHeaderRefreshListener(new AbPullToRefreshView.OnHeaderRefreshListener() {
             @Override
@@ -66,22 +53,6 @@ public class MainActivity extends BaseActivity {
             @Override
             public void onFooterLoad(AbPullToRefreshView view) {
                 getMoreData();
-            }
-        });
-        slideMenu.setOnDragStateChangeListener(new SlideMenu.OnDragStateChangeListener() {
-            @Override
-            public void onOpen() {
-                isSlidingMenuOpen = true;
-            }
-
-            @Override
-            public void onClose() {
-                isSlidingMenuOpen = false;
-            }
-
-            @Override
-            public void onDraging(float fraction) {
-
             }
         });
     }
@@ -103,6 +74,7 @@ public class MainActivity extends BaseActivity {
         mCurrentPage = 0;
         mPostList = getDataTest(mCurrentPage, mSize);
         postAdapter = new PostAdapter(this, mPostList);
+        postAdapter.setPageSize(5);
         lvPost.setAdapter(postAdapter);
         abPullToRefresh.onHeaderRefreshFinish();
     }
@@ -112,7 +84,7 @@ public class MainActivity extends BaseActivity {
         for (int i = 0; i < size; i++) {
             Post post = new Post();
             post.setAuthor(MyUser.getCurrentUser(MyUser.class));
-            post.setContent("第" + (currentPage + 1) + "页，" + "第" + (i + 1) + "条数据");
+            post.setContent("今天天气真好啊今天天气真好啊今天天气真好啊今天天气真好啊今天天气真好啊今天天气真好啊今天天气真好啊");
             post.setContentImg("http://b.hiphotos.baidu.com/image/pic/item/fd039245d688d43f76b17dd4781ed21b0ef43bf8.jpg");
             postList.add(post);
         }
@@ -129,11 +101,6 @@ public class MainActivity extends BaseActivity {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.ivBack://显示侧滑菜单
-                if (isSlidingMenuOpen) {
-                    slideMenu.close();
-                } else {
-                    slideMenu.open();
-                }
                 break;
         }
     }

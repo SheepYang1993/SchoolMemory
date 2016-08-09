@@ -32,6 +32,7 @@ public class PostAdapter extends BaseAdapter {
     ImageView ivThumb;
     private Context mContext;
     private List<Post> mPostList;
+    private int mSize = 5;
 
     public PostAdapter(Context context, List<Post> postList) {
         mContext = context;
@@ -88,7 +89,14 @@ public class PostAdapter extends BaseAdapter {
         } else {
             vh.tvThumbName.setText(likes);
         }
+        vh.tvPageSize.setText("第" + (position / mSize + 1) + "页 " + "第" + (position % mSize + 1) + "条");
         return convertView;
+    }
+
+    public void setPageSize(int size) {
+        if (size > 0) {
+            mSize = size;
+        }
     }
 
     /**
@@ -132,6 +140,8 @@ public class PostAdapter extends BaseAdapter {
         TextView tvThumbName;
         @BindView(R.id.tvThumbNameLast)
         TextView tvThumbNameLast;
+        @BindView(R.id.tvPageSize)
+        TextView tvPageSize;
 
         ViewHolder(View view) {
             ButterKnife.bind(this, view);

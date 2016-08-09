@@ -1,32 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.sheepyang.schoolmemory.view.MyLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/mllMain"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ffffff"
-    android:orientation="vertical"
     tools:context=".activity.MainActivity">
 
-    <RelativeLayout
+    <com.sheepyang.schoolmemory.view.abView.AbPullToRefreshView
+        android:id="@+id/abPullToRefresh"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/white">
 
-        <com.sheepyang.schoolmemory.view.abView.AbPullToRefreshView
-            android:id="@+id/abPullToRefresh"
+        <ListView
+            android:id="@+id/lvPost"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/white">
+            android:cacheColorHint="@color/transparent"
+            android:divider="@null"
+            android:dividerHeight="1dp">
 
-            <ListView
-                android:id="@+id/lvPost"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:cacheColorHint="@color/transparent"
-                android:divider="@color/split_gray"
-                android:dividerHeight="1dp">
-
-            </ListView>
-        </com.sheepyang.schoolmemory.view.abView.AbPullToRefreshView>
-    </RelativeLayout>
-</com.sheepyang.schoolmemory.view.MyLinearLayout>
+        </ListView>
+    </com.sheepyang.schoolmemory.view.abView.AbPullToRefreshView>
+</RelativeLayout>
