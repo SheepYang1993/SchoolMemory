@@ -2,6 +2,8 @@ package com.sheepyang.schoolmemory.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.widget.DrawerLayout;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.ListView;
 
@@ -24,6 +26,8 @@ public class MainActivity extends BaseActivity {
     ListView lvPost;
     @BindView(R.id.abPullToRefresh)
     AbPullToRefreshView abPullToRefresh;
+    @BindView(R.id.drawerLayout)
+    DrawerLayout drawerLayout;
 
     private List<Post> mPostList;
     private PostAdapter postAdapter;
@@ -55,6 +59,7 @@ public class MainActivity extends BaseActivity {
                 getMoreData();
             }
         });
+        mBarIvBack.setOnClickListener(this);
     }
 
     private void getMoreData() {
@@ -62,12 +67,6 @@ public class MainActivity extends BaseActivity {
         mPostList.addAll(getDataTest(mCurrentPage, mSize));
         postAdapter.upDataList(mPostList);
         abPullToRefresh.onFooterLoadFinish();
-    }
-
-    @Override
-    public void onDoubleClick() {
-        super.onDoubleClick();
-        lvPost.smoothScrollToPositionFromTop(0, 0);
     }
 
     private void initData() {
@@ -80,7 +79,7 @@ public class MainActivity extends BaseActivity {
     }
 
     private List<Post> getDataTest(int currentPage, int size) {
-        mLoadingPD.show();
+//        mLoadingPD.show();
         List<Post> postList = new ArrayList<Post>();
         for (int i = 0; i < size; i++) {
             Post post = new Post();
@@ -89,7 +88,7 @@ public class MainActivity extends BaseActivity {
             post.setContentImg("http://b.hiphotos.baidu.com/image/pic/item/fd039245d688d43f76b17dd4781ed21b0ef43bf8.jpg");
             postList.add(post);
         }
-        mLoadingPD.dismiss();
+//        mLoadingPD.dismiss();
         return postList;
     }
 
@@ -103,6 +102,11 @@ public class MainActivity extends BaseActivity {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.ivBack://显示侧滑菜单
+                if (drawerLayout.isDrawerOpen(Gravity.LEFT)) {
+                    drawerLayout.closeDrawer(Gravity.LEFT);
+                } else {
+                    drawerLayout.openDrawer(Gravity.LEFT);
+                }
                 break;
         }
     }
