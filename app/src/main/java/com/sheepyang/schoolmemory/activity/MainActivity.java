@@ -80,6 +80,7 @@ public class MainActivity extends BaseActivity {
     }
 
     private List<Post> getDataTest(int currentPage, int size) {
+        mLoadingPD.show();
         List<Post> postList = new ArrayList<Post>();
         for (int i = 0; i < size; i++) {
             Post post = new Post();
@@ -88,6 +89,7 @@ public class MainActivity extends BaseActivity {
             post.setContentImg("http://b.hiphotos.baidu.com/image/pic/item/fd039245d688d43f76b17dd4781ed21b0ef43bf8.jpg");
             postList.add(post);
         }
+        mLoadingPD.dismiss();
         return postList;
     }
 
