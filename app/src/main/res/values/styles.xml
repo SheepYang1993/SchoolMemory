@@ -1,17 +1,17 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:actionBarSize">44dip</item>
-        <!-- 下段代码就是去除阴影的 -->
-        <item name="android:windowContentOverlay">@null</item>
-        <!-- 去除分隔处的黑线 -->
-        <item name="actionBarDivider">@null</item>
-        <item name="android:actionBarDivider">@null</item>
+    </style>
+
+    <style name="AppTheme.NoActionBar" parent="AppTheme">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowIsTranslucent">true</item>
     </style>
 
     <style name="CustomDialog" parent="@android:style/Theme.Dialog">

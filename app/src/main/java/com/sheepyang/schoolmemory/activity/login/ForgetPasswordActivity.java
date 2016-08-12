@@ -3,14 +3,12 @@ package com.sheepyang.schoolmemory.activity.login;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
 import com.sheepyang.schoolmemory.R;
 import com.sheepyang.schoolmemory.activity.BaseActivity;
-import com.sheepyang.schoolmemory.bean.MyUser;
 import com.sheepyang.schoolmemory.util.AppUtil;
 import com.sheepyang.schoolmemory.util.ErrorUtil;
 import com.sheepyang.schoolmemory.util.PLog;
@@ -21,8 +19,6 @@ import butterknife.OnClick;
 import cn.bmob.v3.BmobSMS;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.QueryListener;
-import cn.bmob.v3.listener.SaveListener;
-import cn.bmob.v3.listener.UpdateListener;
 
 /**
  * 忘记密码界面
@@ -45,7 +41,6 @@ public class ForgetPasswordActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mActionBar.hide();
         setContentView(R.layout.activity_forget_password);
         ButterKnife.bind(this);
     }

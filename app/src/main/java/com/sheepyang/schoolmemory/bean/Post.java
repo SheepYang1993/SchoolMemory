@@ -6,7 +6,7 @@ import cn.bmob.v3.BmobObject;
 
 /**
  * 帖子
- * Created by Administrator on 2016/8/4.
+ * Created by SheepYang on 2016/8/4.
  */
 public class Post extends BmobObject {
     private MyUser author;//作者

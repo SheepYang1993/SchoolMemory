@@ -12,6 +12,7 @@ import com.sheepyang.schoolmemory.activity.BaseActivity;
 import com.sheepyang.schoolmemory.activity.MainActivity;
 import com.sheepyang.schoolmemory.bean.MyUser;
 import com.sheepyang.schoolmemory.util.AppUtil;
+import com.sheepyang.schoolmemory.util.Constant;
 import com.sheepyang.schoolmemory.util.ErrorUtil;
 
 import butterknife.BindView;
@@ -34,7 +35,6 @@ public class LoginActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mActionBar.hide();
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
     }
@@ -55,6 +55,19 @@ public class LoginActivity extends BaseActivity {
                 mIntent = new Intent(this, RegistActivity.class);
                 startActivity(mIntent);
                 break;
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (System.currentTimeMillis() - mCurrentTime < 2000) {
+            mCurrentTime = 0;
+            mIntent = new Intent();
+            mIntent.setAction(Constant.EXIT_APP_ACTION);
+            sendBroadcast(mIntent);
+        } else {
+            mCurrentTime = System.currentTimeMillis();
+            showToast("再次点击退出APP");
         }
     }
 

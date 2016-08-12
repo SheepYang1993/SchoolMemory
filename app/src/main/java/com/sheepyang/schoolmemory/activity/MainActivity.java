@@ -2,37 +2,40 @@ package com.sheepyang.schoolmemory.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
+import android.text.TextUtils;
 import android.view.Gravity;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.ListView;
 
+import com.bumptech.glide.Glide;
 import com.sheepyang.schoolmemory.R;
-import com.sheepyang.schoolmemory.adapter.PostAdapter;
-import com.sheepyang.schoolmemory.bean.MyUser;
-import com.sheepyang.schoolmemory.bean.Post;
+import com.sheepyang.schoolmemory.fragment.HomeFragment;
+import com.sheepyang.schoolmemory.fragment.PersonFragment;
+import com.sheepyang.schoolmemory.fragment.SettingFragment;
+import com.sheepyang.schoolmemory.util.AppUtil;
 import com.sheepyang.schoolmemory.util.Constant;
-import com.sheepyang.schoolmemory.view.abView.AbPullToRefreshView;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import de.hdodenhof.circleimageview.CircleImageView;
 
-public class MainActivity extends BaseActivity {
+/**
+ * 帖子概览列表界面
+ */
+public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-    @BindView(R.id.lvPost)
-    ListView lvPost;
-    @BindView(R.id.abPullToRefresh)
-    AbPullToRefreshView abPullToRefresh;
     @BindView(R.id.drawerLayout)
-    DrawerLayout drawerLayout;
-
-    private List<Post> mPostList;
-    private PostAdapter postAdapter;
-    private int mCurrentPage = 0;//当前页数
-    private int mSize = 5;//页数大小
+    DrawerLayout mDrawerLayout;
+    @BindView(R.id.navView)
+    NavigationView mNavView;
+    private View mHeaderView;
+    private CircleImageView mCivHeadAvatar;
+    private Fragment[] mFragments;
+    private int currentIndex;//当前Fragment的位置
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,88 +43,157 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         initView();
-        initEvent();
-        initData();
-    }
-
-    private void initEvent() {
-        //下拉刷新
-        abPullToRefresh.setOnHeaderRefreshListener(new AbPullToRefreshView.OnHeaderRefreshListener() {
-            @Override
-            public void onHeaderRefresh(AbPullToRefreshView view) {
-                initData();
-            }
-        });
-        //下拉加在更多
-        abPullToRefresh.setOnFooterLoadListener(new AbPullToRefreshView.OnFooterLoadListener() {
-            @Override
-            public void onFooterLoad(AbPullToRefreshView view) {
-                getMoreData();
-            }
-        });
-        mBarIvBack.setOnClickListener(this);
-    }
-
-    private void getMoreData() {
-        mCurrentPage++;
-        mPostList.addAll(getDataTest(mCurrentPage, mSize));
-        postAdapter.upDataList(mPostList);
-        abPullToRefresh.onFooterLoadFinish();
-    }
-
-    private void initData() {
-        mCurrentPage = 0;
-        mPostList = getDataTest(mCurrentPage, mSize);
-        postAdapter = new PostAdapter(this, mPostList);
-        postAdapter.setPageSize(5);
-        lvPost.setAdapter(postAdapter);
-        abPullToRefresh.onHeaderRefreshFinish();
-    }
-
-    private List<Post> getDataTest(int currentPage, int size) {
-//        mLoadingPD.show();
-        List<Post> postList = new ArrayList<Post>();
-        for (int i = 0; i < size; i++) {
-            Post post = new Post();
-            post.setAuthor(MyUser.getCurrentUser(MyUser.class));
-            post.setContent("今天天气真好啊今天天气真好啊今天天气真好啊今天天气真好啊今天天气真好啊今天天气真好啊今天天气真好啊");
-            post.setContentImg("http://b.hiphotos.baidu.com/image/pic/item/fd039245d688d43f76b17dd4781ed21b0ef43bf8.jpg");
-            postList.add(post);
-        }
-//        mLoadingPD.dismiss();
-        return postList;
     }
 
     private void initView() {
-        setNoLast();
-        setNoBack();
-        setBackIv(R.drawable.menu);
+        mDrawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
+            @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {
+                if (HomeFragment.getInstance().mFabMenu.isOpened()) {
+                    HomeFragment.getInstance().mFabMenu.close(true);
+                }
+            }
+
+            @Override
+            public void onDrawerOpened(View drawerView) {
+
+            }
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+
+            }
+
+            @Override
+            public void onDrawerStateChanged(int newState) {
+
+            }
+        });
+        initFragment();
+        initNavigationView();
+    }
+
+    /**
+     * 初始化Fragment
+     */
+    private void initFragment() {
+        HomeFragment homeFragment = HomeFragment.getInstance();
+        PersonFragment personFragment = PersonFragment.getInstance();
+        SettingFragment settingFragment = SettingFragment.getInstance();
+        mFragments = new Fragment[]{
+                homeFragment,
+                personFragment,
+                settingFragment
+        };
+    }
+
+    /**
+     * 切换Fragment
+     *
+     * @param index 位置
+     * @param title 标题
+     * @param item  菜单点击的item
+     */
+    public void switchFragment(int index, String title, MenuItem item) {
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.hide(mFragments[currentIndex]);
+        if (!mFragments[index].isAdded()) {
+            ft.add(R.id.content, mFragments[index]);
+        }
+        ft.show(mFragments[index]).commit();
+        currentIndex = index;
+
+        item.setChecked(true);
+        mDrawerLayout.closeDrawers();
+    }
+
+    /**
+     * 初始化菜单栏
+     */
+    private void initNavigationView() {
+        mNavView.getMenu().clear();
+        mNavView.inflateMenu(R.menu.menu_nav_view);
+        mNavView.setNavigationItemSelectedListener(this);
+        if (mHeaderView == null) {
+            mHeaderView = mNavView.inflateHeaderView(R.layout.layout_header_main);
+            mCivHeadAvatar = (CircleImageView) mHeaderView.findViewById(R.id.civHeadAvatar);
+            if (mCurrentUser.getAvatar() == null || TextUtils.isEmpty(mCurrentUser.getAvatar().getFileUrl().toString().trim())) {
+                Glide.with(getApplicationContext())
+                        .load(AppUtil.getRadomHeadView(null))
+                        .fitCenter()
+                        .crossFade()
+                        .into(mCivHeadAvatar);
+            } else {
+                Glide.with(getApplicationContext())
+                        .load(mCurrentUser.getAvatar().getFileUrl().toString().trim())
+                        .fitCenter()
+                        .crossFade()
+                        .into(mCivHeadAvatar);
+            }
+        }
+        mCivHeadAvatar.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                showToast("更改头像");
+                return true;
+            }
+        });
+        switchFragment(0, "首页", mNavView.getMenu().getItem(0));
     }
 
     @Override
     public void onClick(View view) {
+        super.onClick(view);
         switch (view.getId()) {
-            case R.id.ivBack://显示侧滑菜单
-                if (drawerLayout.isDrawerOpen(Gravity.LEFT)) {
-                    drawerLayout.closeDrawer(Gravity.LEFT);
-                } else {
-                    drawerLayout.openDrawer(Gravity.LEFT);
-                }
+            default:
                 break;
         }
     }
 
     @Override
     public void onBackPressed() {
-        if (System.currentTimeMillis() - mCurrentTime < 2000) {
+        if (HomeFragment.getInstance().mFabMenu.isOpened()) {
+            HomeFragment.getInstance().mFabMenu.close(true);
+        } else if (mDrawerLayout.isDrawerOpen(Gravity.LEFT)) {
+            mDrawerLayout.closeDrawer(Gravity.LEFT);
+        } else if (System.currentTimeMillis() - mCurrentTime < 2000) {
             mCurrentTime = 0;
             mIntent = new Intent();
             mIntent.setAction(Constant.EXIT_APP_ACTION);
-            mIntent.putExtra("isLogOut", true);
             sendBroadcast(mIntent);
         } else {
             mCurrentTime = System.currentTimeMillis();
             showToast("再次点击退出APP");
         }
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.itemHome:
+                switchFragment(0, "首页", item);
+                break;
+            case R.id.itemPersonCenter:
+                switchFragment(1, "个人中心", item);
+                break;
+            case R.id.itemSetting:
+                switchFragment(2, "设置", item);
+                break;
+            case R.id.itemShare:
+                showToast("分享");
+                break;
+            case R.id.itemAbout:
+                showToast("关于");
+                break;
+            case R.id.itemLogout:
+                mIntent = new Intent();
+                mIntent.setAction(Constant.EXIT_APP_ACTION);
+                mIntent.putExtra("isLogOut", true);
+                sendBroadcast(mIntent);
+                break;
+            default:
+                break;
+        }
+        return true;
     }
 }

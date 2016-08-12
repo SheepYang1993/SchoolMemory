@@ -17,6 +17,8 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 
+import com.sheepyang.schoolmemory.R;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -27,11 +29,39 @@ import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class AppUtil {
 
+    /**
+     * 随即获取头像
+     *
+     * @return
+     */
+    public static int getRadomHeadView(Integer position) {
+        int[] avatars = new int[]{
+                R.drawable.ic_avatar1,
+                R.drawable.ic_avatar2,
+                R.drawable.ic_avatar3,
+                R.drawable.ic_avatar4,
+                R.drawable.ic_avatar5,
+                R.drawable.ic_avatar6,
+                R.drawable.ic_avatar7,
+                R.drawable.ic_avatar8,
+                R.drawable.ic_avatar9,
+                R.drawable.ic_avatar10,
+                R.drawable.ic_avatar11,
+        };
+        if (position != null && position >= 0) {
+            return avatars[position % avatars.length];
+        } else {
+            Random random = new Random();
+            int randomNum = random.nextInt(avatars.length);
+            return avatars[randomNum];
+        }
+    }
 
     /**
      * 描述：判断网络是否有效.
@@ -347,6 +377,7 @@ public class AppUtil {
 
     /**
      * 判断是否是手机号码
+     *
      * @param mobiles 手机号码
      * @return 是否手机号码
      */

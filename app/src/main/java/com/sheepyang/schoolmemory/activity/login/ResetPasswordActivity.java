@@ -3,7 +3,6 @@ package com.sheepyang.schoolmemory.activity.login;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -12,7 +11,6 @@ import com.sheepyang.schoolmemory.R;
 import com.sheepyang.schoolmemory.activity.BaseActivity;
 import com.sheepyang.schoolmemory.util.Constant;
 import com.sheepyang.schoolmemory.util.ErrorUtil;
-import com.sheepyang.schoolmemory.util.PLog;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -39,7 +37,6 @@ public class ResetPasswordActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mActionBar.hide();
         setContentView(R.layout.activity_reset_password);
         ButterKnife.bind(this);
         phone = getIntent().getStringExtra("phone");

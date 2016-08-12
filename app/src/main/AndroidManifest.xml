@@ -23,7 +23,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <!--欢迎界面-->
-        <activity android:name=".activity.FirstActivity">
+        <activity
+            android:name=".activity.FirstActivity"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

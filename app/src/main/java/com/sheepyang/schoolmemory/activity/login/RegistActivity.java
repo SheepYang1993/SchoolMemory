@@ -53,7 +53,6 @@ public class RegistActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mActionBar.hide();
         setContentView(R.layout.activity_regist);
         ButterKnife.bind(this);
         String strAgree = "<html>同意  <font color=#33abff>《校园纪念册服务协议》</font></html>";

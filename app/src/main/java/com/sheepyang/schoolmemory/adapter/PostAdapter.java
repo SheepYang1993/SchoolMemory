@@ -14,6 +14,7 @@ import com.bumptech.glide.Glide;
 import com.sheepyang.schoolmemory.R;
 import com.sheepyang.schoolmemory.bean.MyUser;
 import com.sheepyang.schoolmemory.bean.Post;
+import com.sheepyang.schoolmemory.util.AppUtil;
 import com.sheepyang.schoolmemory.util.MyToast;
 
 import java.util.List;
@@ -66,6 +67,19 @@ public class PostAdapter extends BaseAdapter {
             vh = (ViewHolder) convertView.getTag();
         }
         vh.tvName.setText(post.getAuthor().getNick());
+        if (post.getAuthor().getAvatar() == null || TextUtils.isEmpty(post.getAuthor().getAvatar().getFileUrl().toString().trim())) {
+            Glide.with(mContext.getApplicationContext())
+                    .load(AppUtil.getRadomHeadView(position))
+                    .fitCenter()
+                    .crossFade()
+                    .into(vh.civAvatar);
+        } else {
+            Glide.with(mContext.getApplicationContext())
+                    .load(post.getAuthor().getAvatar().getFileUrl().toString().trim())
+                    .fitCenter()
+                    .crossFade()
+                    .into(vh.civAvatar);
+        }
         Glide.with(mContext.getApplicationContext())
                 .load(post.getContentImg())
                 .fitCenter()
