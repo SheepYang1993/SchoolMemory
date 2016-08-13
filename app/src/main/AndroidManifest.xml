@@ -25,7 +25,8 @@
         <!--欢迎界面-->
         <activity
             android:name=".activity.FirstActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar.FullScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -33,15 +34,25 @@
             </intent-filter>
         </activity>
         <!--主界面-->
-        <activity android:name=".activity.MainActivity" />
+        <activity
+            android:name=".activity.MainActivity"
+            android:screenOrientation="portrait" />
         <!--登录界面-->
-        <activity android:name=".activity.login.LoginActivity" />
+        <activity
+            android:name=".activity.login.LoginActivity"
+            android:screenOrientation="portrait" />
         <!--注册界面-->
-        <activity android:name=".activity.login.RegistActivity" />
+        <activity
+            android:name=".activity.login.RegistActivity"
+            android:screenOrientation="portrait" />
         <!--忘记密码界面-->
-        <activity android:name=".activity.login.ForgetPasswordActivity" />
+        <activity
+            android:name=".activity.login.ForgetPasswordActivity"
+            android:screenOrientation="portrait" />
         <!--重置密码界面-->
-        <activity android:name=".activity.login.ResetPasswordActivity" />
+        <activity
+            android:name=".activity.login.ResetPasswordActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

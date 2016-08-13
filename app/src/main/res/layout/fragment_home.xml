@@ -27,13 +27,11 @@
         android:id="@+id/fabMenu"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:paddingBottom="10dp"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        fab:menu_backgroundColor="#ccffffff"
-        fab:menu_fab_label="Menu label"
+        android:layout_alignParentEnd="true"
+        fab:menu_backgroundColor="@color/translucent"
+        fab:menu_colorNormal="@color/blue"
+        fab:menu_colorPressed="@color/blue_dark1"
+        fab:menu_colorRipple="@color/blue_dark2"
         fab:menu_labels_ellipsize="end"
         fab:menu_labels_singleLine="true">
 
@@ -41,24 +39,33 @@
             android:id="@+id/fab1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/add"
-            fab:fab_label="Disabled"
+            android:src="@drawable/ic_edit"
+            fab:fab_colorNormal="@color/blue"
+            fab:fab_colorPressed="@color/blue_dark1"
+            fab:fab_colorRipple="@color/blue_dark2"
+            fab:fab_label="文字"
             fab:fab_size="mini" />
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fab2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/add"
-            fab:fab_label="Remove button"
+            android:src="@drawable/fab_img"
+            fab:fab_colorNormal="@color/blue"
+            fab:fab_colorPressed="@color/blue_dark1"
+            fab:fab_colorRipple="@color/blue_dark2"
+            fab:fab_label="图片"
             fab:fab_size="mini" />
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fab3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/add"
-            fab:fab_label="Restore Button"
+            android:src="@drawable/fab_question"
+            fab:fab_colorNormal="@color/blue"
+            fab:fab_colorPressed="@color/blue_dark1"
+            fab:fab_colorRipple="@color/blue_dark2"
+            fab:fab_label="提问"
             fab:fab_size="mini" />
 
     </com.github.clans.fab.FloatingActionMenu>
