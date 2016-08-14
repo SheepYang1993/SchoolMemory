@@ -1,15 +1,16 @@
 package com.sheepyang.schoolmemory.bean;
 
-import cn.bmob.v3.BmobObject;
-import cn.bmob.v3.datatype.BmobFile;
+import com.sheepyang.schoolmemory.R;
 
 /**
  * 话题类型
  * Created by SheepYang on 2016/8/12.
  */
-public class TopicType extends BmobObject {
-    private String name;// 类型名称
-    private BmobFile image;//类型图片
+public enum TopicType {
+    TEXT("文字", R.drawable.fab_edit), QUESTION("问题", R.drawable.fab_question), IMAGE("图片", R.drawable.fab_img);
+
+    private int resId;
+    private String name;
 
     public String getName() {
         return name;
@@ -19,11 +20,16 @@ public class TopicType extends BmobObject {
         this.name = name;
     }
 
-    public BmobFile getImage() {
-        return image;
+    public int getResId() {
+        return resId;
     }
 
-    public void setImage(BmobFile image) {
-        this.image = image;
+    public void setResId(int resId) {
+        this.resId = resId;
+    }
+
+    private TopicType(String name, int resId) {
+        this.name = name;
+        this.resId = resId;
     }
 }

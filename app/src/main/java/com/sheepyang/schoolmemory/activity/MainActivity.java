@@ -13,6 +13,7 @@ import android.view.View;
 
 import com.bumptech.glide.Glide;
 import com.sheepyang.schoolmemory.R;
+import com.sheepyang.schoolmemory.activity.login.LoginActivity;
 import com.sheepyang.schoolmemory.fragment.HomeFragment;
 import com.sheepyang.schoolmemory.fragment.PersonFragment;
 import com.sheepyang.schoolmemory.fragment.SettingFragment;
@@ -117,7 +118,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         if (mHeaderView == null) {
             mHeaderView = mNavView.inflateHeaderView(R.layout.layout_header_main);
             mCivHeadAvatar = (CircleImageView) mHeaderView.findViewById(R.id.civHeadAvatar);
-            if (mCurrentUser.getAvatar() == null || TextUtils.isEmpty(mCurrentUser.getAvatar().getFileUrl().toString().trim())) {
+            if (mCurrentUser.getAvatar() == null || TextUtils.isEmpty(mCurrentUser.getAvatar())) {
                 Glide.with(getApplicationContext())
                         .load(AppUtil.getRadomHeadView(null))
                         .fitCenter()
@@ -125,7 +126,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                         .into(mCivHeadAvatar);
             } else {
                 Glide.with(getApplicationContext())
-                        .load(mCurrentUser.getAvatar().getFileUrl().toString().trim())
+                        .load(mCurrentUser.getAvatar())
                         .fitCenter()
                         .crossFade()
                         .into(mCivHeadAvatar);
@@ -186,10 +187,18 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 showToast("关于");
                 break;
             case R.id.itemLogout:
-                mIntent = new Intent();
-                mIntent.setAction(Constant.EXIT_APP_ACTION);
-                mIntent.putExtra("isLogOut", true);
-                sendBroadcast(mIntent);
+                if (System.currentTimeMillis() - mCurrentTime < 2000) {
+                    mCurrentTime = 0;
+                    mIntent = new Intent();
+                    mIntent.setAction(Constant.EXIT_APP_ACTION);
+                    mIntent.putExtra("isLogOut", true);
+                    sendBroadcast(mIntent);
+                    mIntent = new Intent(this, LoginActivity.class);
+                    startActivity(mIntent);
+                } else {
+                    mCurrentTime = System.currentTimeMillis();
+                    showToast("再次点击切换账号");
+                }
                 break;
             default:
                 break;

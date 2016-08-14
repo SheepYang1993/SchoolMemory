@@ -22,15 +22,15 @@
             <item
                 android:id="@+id/itemShare"
                 android:icon="@drawable/share"
-                android:title="分享App" />
+                android:title="分享" />
             <item
                 android:id="@+id/itemAbout"
                 android:icon="@drawable/high_importance"
-                android:title="关于App" />
+                android:title="关于" />
             <item
                 android:id="@+id/itemLogout"
-                android:icon="@drawable/logout"
-                android:title="退出App" />
+                android:icon="@drawable/switch_account"
+                android:title="切换账号" />
         </menu>
     </item>
 

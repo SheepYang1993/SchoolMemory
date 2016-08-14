@@ -24,7 +24,7 @@
         android:theme="@style/AppTheme">
         <!--欢迎界面-->
         <activity
-            android:name=".activity.FirstActivity"
+            android:name=".activity.SplashActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar.FullScreen">
             <intent-filter>

@@ -20,7 +20,7 @@ public class PersonFragment extends BaseFragment {
     private static PersonFragment mHomeFragment;
     @BindView(R.id.abPullToRefresh)
     AbPullToRefreshView mAbPullToRefresh;
-    @BindView(R.id.lvPost)
+    @BindView(R.id.lvTopic)
     ListView mLvPost;
     private List<Post> mPostList;
     private PostAdapter mPostAdapter;
@@ -29,7 +29,7 @@ public class PersonFragment extends BaseFragment {
 
     @Override
     public int getLayoutId() {
-        return R.layout.fragment_home;
+        return R.layout.fragment_person;
     }
 
     @Override

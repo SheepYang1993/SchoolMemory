@@ -148,7 +148,7 @@ public class RegistActivity extends BaseActivity {
     private void toGetCode() {
         mSendPhone = edtPhone.getText().toString().trim();
         if (TextUtils.isEmpty(mSendPhone)) {
-            showToast("您输入的手机号");
+            showToast("请输入手机号");
             return;
         }
         if (!AppUtil.isMobileNO(mSendPhone)) {

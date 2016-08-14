@@ -9,8 +9,9 @@ import android.widget.ListView;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 import com.sheepyang.schoolmemory.R;
-import com.sheepyang.schoolmemory.adapter.PostAdapter;
-import com.sheepyang.schoolmemory.bean.Post;
+import com.sheepyang.schoolmemory.adapter.TopicAdapter;
+import com.sheepyang.schoolmemory.bean.Topic;
+import com.sheepyang.schoolmemory.bean.TopicType;
 import com.sheepyang.schoolmemory.view.abView.AbPullToRefreshView;
 
 import java.util.ArrayList;
@@ -26,7 +27,7 @@ public class HomeFragment extends BaseFragment {
     private static final int TO_ISSUE_TOPIC = 0;
     @BindView(R.id.abPullToRefresh)
     AbPullToRefreshView mAbPullToRefresh;
-    @BindView(R.id.lvPost)
+    @BindView(R.id.lvTopic)
     ListView mLvPost;
     @BindView(R.id.fab1)
     FloatingActionButton mFab1;
@@ -36,10 +37,10 @@ public class HomeFragment extends BaseFragment {
     FloatingActionButton mFab3;
     @BindView(R.id.fabMenu)
     public FloatingActionMenu mFabMenu;
-    private List<Post> mPostList;
-    private PostAdapter mPostAdapter;
+    private List<Topic> mTopicList;
+    private TopicAdapter mTopicAdapter;
     private int mCurrentPage = 0;//当前页数
-    private int mSize = 5;//页数大小
+    private int mSize = 8;//页数大小
     private int mPreviousVisibleItem;
 
     @Override
@@ -49,6 +50,24 @@ public class HomeFragment extends BaseFragment {
 
     @Override
     public void initView() {
+        initFloatButton();// 初始化浮动按钮
+        //下拉刷新
+        mAbPullToRefresh.setOnHeaderRefreshListener(new AbPullToRefreshView.OnHeaderRefreshListener() {
+            @Override
+            public void onHeaderRefresh(AbPullToRefreshView view) {
+                initData();
+            }
+        });
+        //下拉加在更多
+        mAbPullToRefresh.setOnFooterLoadListener(new AbPullToRefreshView.OnFooterLoadListener() {
+            @Override
+            public void onFooterLoad(AbPullToRefreshView view) {
+                getMoreData();
+            }
+        });
+    }
+
+    private void initFloatButton() {
         mFabMenu.setClosedOnTouchOutside(true);
         mFabMenu.setMenuButtonShowAnimation(AnimationUtils.loadAnimation(getActivity(), R.anim.show_from_bottom));
         mFabMenu.setMenuButtonHideAnimation(AnimationUtils.loadAnimation(getActivity(), R.anim.hide_to_bottom));
@@ -67,51 +86,62 @@ public class HomeFragment extends BaseFragment {
                 mPreviousVisibleItem = firstVisibleItem;
             }
         });
-        //下拉刷新
-        mAbPullToRefresh.setOnHeaderRefreshListener(new AbPullToRefreshView.OnHeaderRefreshListener() {
-            @Override
-            public void onHeaderRefresh(AbPullToRefreshView view) {
-                initData();
-            }
-        });
-        //下拉加在更多
-        mAbPullToRefresh.setOnFooterLoadListener(new AbPullToRefreshView.OnFooterLoadListener() {
-            @Override
-            public void onFooterLoad(AbPullToRefreshView view) {
-                getMoreData();
-            }
-        });
     }
 
     @Override
     public void initData() {
         mCurrentPage = 0;
-        mPostList = getDataFromBmob(mCurrentPage, mSize);
-        mPostAdapter = new PostAdapter(getActivity(), mPostList);
-        mPostAdapter.setPageSize(5);
-        mLvPost.setAdapter(mPostAdapter);
+        mTopicList = getDataFromBmob(mCurrentPage, mSize);
+        mTopicAdapter = new TopicAdapter(getActivity(), mTopicList);
+        mLvPost.setAdapter(mTopicAdapter);
         mAbPullToRefresh.onHeaderRefreshFinish();
     }
 
     private void getMoreData() {
         mCurrentPage++;
-        mPostList.addAll(getDataFromBmob(mCurrentPage, mSize));
-        mPostAdapter.upDataList(mPostList);
+        mTopicList.addAll(getDataFromBmob(mCurrentPage, mSize));
+        mTopicAdapter.updataList(mTopicList);
         mAbPullToRefresh.onFooterLoadFinish();
     }
 
-    private List<Post> getDataFromBmob(int currentPage, int size) {
+    private List<Topic> getDataFromBmob(int currentPage, int size) {
         mLoadingPD.show();
-        List<Post> postList = new ArrayList<Post>();
+        List<Topic> topicList = new ArrayList<Topic>();
         for (int i = 0; i < size; i++) {
-            Post post = new Post();
-            post.setAuthor(mCurrentUser);
-            post.setContent("这是首页这是首页这是首页这是首页这是首页这是首页这是首页这是首页这是首页这是首页这是首页这是首页这是首页这是首页这是首页");
-            post.setContentImg("http://b.hiphotos.baidu.com/image/pic/item/fd039245d688d43f76b17dd4781ed21b0ef43bf8.jpg");
-            postList.add(post);
+            Topic topic = new Topic();
+            topic.setTitle("标题:" + "第" + (currentPage + 1) + "页" + "第" + (i + 1) + "条");
+            topic.setContent("第" + (currentPage + 1) + "页" + "第" + (i + 1) + "条" + "这是内容这是内容这是内容这是内容这是内容这是内容这是内容这是内容这是内容这是内容这是内容这是内容这是内容这是内容这是内容这是内容这是内容这是内容");
+            topic.setCreator(mCurrentUser);
+            topic.setPostNum(i);
+            ArrayList<String> imageList = new ArrayList<>();
+            if (i % 6 == 0) {
+                topic.setType(TopicType.TEXT);
+            } else if (i % 8 == 1) {
+                topic.setType(TopicType.IMAGE);
+                imageList.add("http://img.52fuqing.com/upload/news/2015-4-22/201542212257252y52ih.jpg");
+            } else if (i % 8 == 2) {
+                topic.setType(TopicType.IMAGE);
+                imageList.add("http://y3.ifengimg.com/cmpp/2014/04/09/15/eb9b263c-487a-4b3d-b110-23b4b0a183e7.jpg");
+                imageList.add("http://ww2.sinaimg.cn/mw690/6a9ef3d1jw1f51rr9gz1bj20qo0svtjj.jpg");
+            } else if (i % 8 == 3) {
+                topic.setType(TopicType.TEXT);
+            } else if (i % 8 == 4) {
+                topic.setType(TopicType.IMAGE);
+                imageList.add("http://y3.ifengimg.com/cmpp/2014/04/09/15/eb9b263c-487a-4b3d-b110-23b4b0a183e7.jpg");
+                imageList.add("http://ww2.sinaimg.cn/mw690/6a9ef3d1jw1f51rr9gz1bj20qo0svtjj.jpg");
+                imageList.add("http://img.52fuqing.com/upload/news/2015-4-22/201542212257252y52ih.jpg");
+            } else if (i % 8 == 5) {
+                topic.setType(TopicType.QUESTION);
+            } else if (i % 8 == 6) {
+                topic.setType(TopicType.QUESTION);
+            } else if (i % 8 == 7) {
+                topic.setType(TopicType.TEXT);
+            }
+            topic.setImageList(imageList);
+            topicList.add(topic);
         }
         mLoadingPD.dismiss();
-        return postList;
+        return topicList;
     }
 
     /**

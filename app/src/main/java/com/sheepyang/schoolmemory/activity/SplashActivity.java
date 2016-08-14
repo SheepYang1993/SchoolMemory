@@ -13,7 +13,6 @@ import android.widget.RelativeLayout;
 
 import com.sheepyang.schoolmemory.R;
 import com.sheepyang.schoolmemory.activity.login.LoginActivity;
-import com.sheepyang.schoolmemory.util.PLog;
 
 import java.util.Random;
 
@@ -22,7 +21,7 @@ import butterknife.ButterKnife;
 import cn.bmob.v3.BmobUser;
 
 
-public class FirstActivity extends BaseActivity {
+public class SplashActivity extends BaseActivity {
 
     @BindView(R.id.ivLogo)
     ImageView ivLogo;
@@ -42,7 +41,7 @@ public class FirstActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_first);
+        setContentView(R.layout.activity_splash);
         ButterKnife.bind(this);
         initView();
         addAnimation();
@@ -99,10 +98,10 @@ public class FirstActivity extends BaseActivity {
         @Override
         public void run() {
             if (BmobUser.getCurrentUser() == null) {
-                mIntent = new Intent(FirstActivity.this, LoginActivity.class);
+                mIntent = new Intent(SplashActivity.this, LoginActivity.class);
                 mIntent.putExtra("fromFirst", true);// 我的页面判断是否从这个页面进去的
             } else {
-                mIntent = new Intent(FirstActivity.this, MainActivity.class);
+                mIntent = new Intent(SplashActivity.this, MainActivity.class);
                 mIntent.putExtra("fromFirst", true);// 我的页面判断是否从这个页面进去的
             }
             startActivity(mIntent);

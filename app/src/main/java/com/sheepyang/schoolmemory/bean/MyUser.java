@@ -7,8 +7,8 @@ import cn.bmob.v3.datatype.BmobFile;
  * Created by Administrator on 2016/8/4.
  */
 public class MyUser extends BmobUser {
-    private String nick;
-    private BmobFile avatar;
+    private String nick;// 昵称
+    private String avatar;// 头像
 
     public String getNick() {
         return nick;
@@ -18,11 +18,11 @@ public class MyUser extends BmobUser {
         this.nick = nick;
     }
 
-    public BmobFile getAvatar() {
+    public String getAvatar() {
         return avatar;
     }
 
-    public void setAvatar(BmobFile avatar) {
+    public void setAvatar(String avatar) {
         this.avatar = avatar;
     }
 }

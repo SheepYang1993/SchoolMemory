@@ -26,7 +26,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * 帖子Item
- * Created by Administrator on 2016/8/4.
+ * Created by SheepYang on 2016/8/4.
  */
 public class PostAdapter extends BaseAdapter {
     @BindView(R.id.ivThumb)
@@ -67,7 +67,7 @@ public class PostAdapter extends BaseAdapter {
             vh = (ViewHolder) convertView.getTag();
         }
         vh.tvName.setText(post.getAuthor().getNick());
-        if (post.getAuthor().getAvatar() == null || TextUtils.isEmpty(post.getAuthor().getAvatar().getFileUrl().toString().trim())) {
+        if (TextUtils.isEmpty(post.getAuthor().getAvatar())) {
             Glide.with(mContext.getApplicationContext())
                     .load(AppUtil.getRadomHeadView(position))
                     .fitCenter()
@@ -75,7 +75,7 @@ public class PostAdapter extends BaseAdapter {
                     .into(vh.civAvatar);
         } else {
             Glide.with(mContext.getApplicationContext())
-                    .load(post.getAuthor().getAvatar().getFileUrl().toString().trim())
+                    .load(post.getAuthor().getAvatar())
                     .fitCenter()
                     .crossFade()
                     .into(vh.civAvatar);
@@ -86,17 +86,17 @@ public class PostAdapter extends BaseAdapter {
                 .crossFade()
                 .into(vh.ivContentImg);
         vh.tvContent.setText(post.getContent());
-        List<MyUser> likesList = post.getLikesList();
+//        List<MyUser> likesList = post.getLikesList();
         String likes = "";
-        if (likesList != null && likesList.size() > 0) {
-            for (int i = 0; i < likesList.size(); i++) {
-                if (!TextUtils.isEmpty(likes)) {
-                    likes += "、";
-                }
-                MyUser user = likesList.get(i);
-                likes += user.getNick();
-            }
-        }
+//        if (likesList != null && likesList.size() > 0) {
+//            for (int i = 0; i < likesList.size(); i++) {
+//                if (!TextUtils.isEmpty(likes)) {
+//                    likes += "、";
+//                }
+//                MyUser user = likesList.get(i);
+//                likes += user.getNick();
+//            }
+//        }
         if (TextUtils.isEmpty(likes)) {
             vh.tvThumbName.setVisibility(View.INVISIBLE);
             vh.tvThumbNameLast.setVisibility(View.INVISIBLE);
