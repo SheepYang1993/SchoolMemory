@@ -14,7 +14,7 @@ import android.view.View;
 import com.bumptech.glide.Glide;
 import com.sheepyang.schoolmemory.R;
 import com.sheepyang.schoolmemory.activity.login.LoginActivity;
-import com.sheepyang.schoolmemory.fragment.HomeFragment;
+import com.sheepyang.schoolmemory.fragment.TopicFragment;
 import com.sheepyang.schoolmemory.fragment.PersonFragment;
 import com.sheepyang.schoolmemory.fragment.SettingFragment;
 import com.sheepyang.schoolmemory.util.AppUtil;
@@ -50,8 +50,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         mDrawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
-                if (HomeFragment.getInstance().mFabMenu.isOpened()) {
-                    HomeFragment.getInstance().mFabMenu.close(true);
+                if (TopicFragment.getInstance().mFabMenu.isOpened()) {
+                    TopicFragment.getInstance().mFabMenu.close(true);
                 }
             }
 
@@ -78,11 +78,11 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
      * 初始化Fragment
      */
     private void initFragment() {
-        HomeFragment homeFragment = HomeFragment.getInstance();
+        TopicFragment topicFragment = TopicFragment.getInstance();
         PersonFragment personFragment = PersonFragment.getInstance();
         SettingFragment settingFragment = SettingFragment.getInstance();
         mFragments = new Fragment[]{
-                homeFragment,
+                topicFragment,
                 personFragment,
                 settingFragment
         };
@@ -153,8 +153,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
     @Override
     public void onBackPressed() {
-        if (HomeFragment.getInstance().mFabMenu.isOpened()) {
-            HomeFragment.getInstance().mFabMenu.close(true);
+        if (TopicFragment.getInstance().mFabMenu.isOpened()) {
+            TopicFragment.getInstance().mFabMenu.close(true);
         } else if (mDrawerLayout.isDrawerOpen(Gravity.LEFT)) {
             mDrawerLayout.closeDrawer(Gravity.LEFT);
         } else if (System.currentTimeMillis() - mCurrentTime < 2000) {

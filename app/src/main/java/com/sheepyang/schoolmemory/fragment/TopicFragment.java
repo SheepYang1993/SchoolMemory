@@ -22,8 +22,8 @@ import butterknife.BindView;
 /**
  * Created by SheepYang on 2016/8/11.
  */
-public class HomeFragment extends BaseFragment {
-    private static HomeFragment mHomeFragment;
+public class TopicFragment extends BaseFragment {
+    private static TopicFragment mTopicFragment;
     private static final int TO_ISSUE_TOPIC = 0;
     @BindView(R.id.abPullToRefresh)
     AbPullToRefreshView mAbPullToRefresh;
@@ -45,7 +45,7 @@ public class HomeFragment extends BaseFragment {
 
     @Override
     public int getLayoutId() {
-        return R.layout.fragment_home;
+        return R.layout.fragment_topic;
     }
 
     @Override
@@ -149,11 +149,11 @@ public class HomeFragment extends BaseFragment {
      *
      * @return
      */
-    public static HomeFragment getInstance() {
-        if (mHomeFragment == null) {
-            mHomeFragment = new HomeFragment();
+    public static TopicFragment getInstance() {
+        if (mTopicFragment == null) {
+            mTopicFragment = new TopicFragment();
         }
-        return mHomeFragment;
+        return mTopicFragment;
     }
 
     @Override

@@ -19,7 +19,7 @@
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-            <include layout="@layout/fragment_home" />
+            <include layout="@layout/fragment_topic" />
         </FrameLayout>
 
     </android.support.design.widget.CoordinatorLayout>
