@@ -175,21 +175,21 @@ public class TopicFragment extends BaseFragment {
         switch (type) {
             case TEXT:
                 new MaterialDialog.Builder(getActivity())
-                        .title("新话题-文字")
+                        .title("文字")
                         .customView(R.layout.layout_dialog_text, wrapInScrollView)
                         .positiveText("创建")
                         .show();
                 break;
             case IMAGE:
                 new MaterialDialog.Builder(getActivity())
-                        .title("新话题-图片")
+                        .title("图片")
                         .customView(R.layout.layout_dialog_image, wrapInScrollView)
                         .positiveText("创建")
                         .show();
                 break;
             case QUESTION:
                 new MaterialDialog.Builder(getActivity())
-                        .title("新的话题-提问")
+                        .title("提问")
                         .customView(R.layout.layout_dialog_question, wrapInScrollView)
                         .positiveText("创建")
                         .show();
