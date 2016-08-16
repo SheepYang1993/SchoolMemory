@@ -2,4 +2,6 @@
     <string name="app_name">校园纪念册</string>
     <string name="drawer_open">打开菜单</string>
     <string name="drawer_close">关闭菜单</string>
+    <string name="input_hint_topic_text">请输入标题</string>
+    <string name="input_content_topic_text">标题</string>
 </resources>

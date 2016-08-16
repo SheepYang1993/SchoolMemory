@@ -1,12 +1,11 @@
 package com.sheepyang.schoolmemory.fragment;
 
-import android.content.Intent;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.AbsListView;
 import android.widget.ListView;
 
-import com.github.clans.fab.FloatingActionButton;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.github.clans.fab.FloatingActionMenu;
 import com.sheepyang.schoolmemory.R;
 import com.sheepyang.schoolmemory.adapter.TopicAdapter;
@@ -18,25 +17,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 
 /**
  * Created by SheepYang on 2016/8/11.
  */
 public class TopicFragment extends BaseFragment {
-    private static TopicFragment mTopicFragment;
-    private static final int TO_ISSUE_TOPIC = 0;
     @BindView(R.id.abPullToRefresh)
     AbPullToRefreshView mAbPullToRefresh;
     @BindView(R.id.lvTopic)
     ListView mLvPost;
-    @BindView(R.id.fab1)
-    FloatingActionButton mFab1;
-    @BindView(R.id.fab2)
-    FloatingActionButton mFab2;
-    @BindView(R.id.fab3)
-    FloatingActionButton mFab3;
     @BindView(R.id.fabMenu)
     public FloatingActionMenu mFabMenu;
+
+    private static TopicFragment mTopicFragment;
     private List<Topic> mTopicList;
     private TopicAdapter mTopicAdapter;
     private int mCurrentPage = 0;//当前页数
@@ -157,21 +151,49 @@ public class TopicFragment extends BaseFragment {
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == TO_ISSUE_TOPIC && resultCode == 1) {
-
-        }
-    }
-
-    @Override
+    @OnClick({R.id.fab1, R.id.fab2, R.id.fab3})
     public void onClick(View view) {
         super.onClick(view);
         switch (view.getId()) {
-//            case R.id.fab:// 发表话题
-//                mIntent = new Intent();
-//                startActivityForResult(mIntent, TO_ISSUE_TOPIC);
-//                break;
+            case R.id.fab1:// 文字
+                createTopic(TopicType.TEXT);
+                break;
+            case R.id.fab2:// 图片
+                createTopic(TopicType.IMAGE);
+                break;
+            case R.id.fab3:// 提问
+                createTopic(TopicType.QUESTION);
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void createTopic(TopicType type) {
+        boolean wrapInScrollView = true;
+        mFabMenu.close(true);
+        switch (type) {
+            case TEXT:
+                new MaterialDialog.Builder(getActivity())
+                        .title("新话题-文字")
+                        .customView(R.layout.layout_dialog_text, wrapInScrollView)
+                        .positiveText("创建")
+                        .show();
+                break;
+            case IMAGE:
+                new MaterialDialog.Builder(getActivity())
+                        .title("新话题-图片")
+                        .customView(R.layout.layout_dialog_image, wrapInScrollView)
+                        .positiveText("创建")
+                        .show();
+                break;
+            case QUESTION:
+                new MaterialDialog.Builder(getActivity())
+                        .title("新的话题-提问")
+                        .customView(R.layout.layout_dialog_question, wrapInScrollView)
+                        .positiveText("创建")
+                        .show();
+                break;
             default:
                 break;
         }

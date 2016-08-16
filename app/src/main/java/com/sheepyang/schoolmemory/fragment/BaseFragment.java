@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.sheepyang.schoolmemory.bean.MyUser;
+import com.sheepyang.schoolmemory.util.MyToast;
 import com.sheepyang.schoolmemory.view.dialog.CustomProgressDialog;
 
 import butterknife.ButterKnife;
@@ -43,6 +44,18 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
         mCurrentUser = MyUser.getCurrentUser(MyUser.class);
         initView();
         initData();
+    }
+
+    public void showToast(int resId) {
+        if (!getActivity().isFinishing()) {
+            MyToast.showMessage(getActivity(), resId);
+        }
+    }
+
+    public void showToast(String msg) {
+        if (!getActivity().isFinishing()) {
+            MyToast.showMessage(getActivity(), msg);
+        }
     }
 
     @Override
