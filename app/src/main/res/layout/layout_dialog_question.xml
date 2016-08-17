@@ -11,6 +11,7 @@
         android:textSize="16sp" />
 
     <EditText
+        android:id="@+id/edtTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="请输入问题"
@@ -24,6 +25,7 @@
         android:textSize="16sp" />
 
     <EditText
+        android:id="@+id/edtContent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="请输入内容"

@@ -1,34 +1,59 @@
 package com.sheepyang.schoolmemory.fragment;
 
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.text.TextUtils;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.github.clans.fab.FloatingActionMenu;
 import com.sheepyang.schoolmemory.R;
 import com.sheepyang.schoolmemory.adapter.TopicAdapter;
 import com.sheepyang.schoolmemory.bean.Topic;
 import com.sheepyang.schoolmemory.bean.TopicType;
+import com.sheepyang.schoolmemory.util.ErrorUtil;
 import com.sheepyang.schoolmemory.view.abView.AbPullToRefreshView;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import butterknife.OnClick;
+import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.FindListener;
+import cn.bmob.v3.listener.SaveListener;
 
 /**
  * Created by SheepYang on 2016/8/11.
  */
 public class TopicFragment extends BaseFragment {
+    private static final int TYPE_INIT_DATA = 0;
+    private static final int TYPE_GET_MORE_DATA = 1;
     @BindView(R.id.abPullToRefresh)
     AbPullToRefreshView mAbPullToRefresh;
     @BindView(R.id.lvTopic)
     ListView mLvPost;
     @BindView(R.id.fabMenu)
     public FloatingActionMenu mFabMenu;
+    private EditText edtTitleText;
+    private EditText edtContentText;
+    private EditText edtTitleImage;
+    private EditText edtContentImage;
+    private EditText edtTitleQuestion;
+    private EditText edtContentQuestion;
+    private ImageView ivAddImage;
 
     private static TopicFragment mTopicFragment;
     private List<Topic> mTopicList;
@@ -36,6 +61,9 @@ public class TopicFragment extends BaseFragment {
     private int mCurrentPage = 0;//当前页数
     private int mSize = 8;//页数大小
     private int mPreviousVisibleItem;
+    private MaterialDialog dialogText;
+    private MaterialDialog dialogImage;
+    private MaterialDialog dialogQuestion;
 
     @Override
     public int getLayoutId() {
@@ -49,7 +77,7 @@ public class TopicFragment extends BaseFragment {
         mAbPullToRefresh.setOnHeaderRefreshListener(new AbPullToRefreshView.OnHeaderRefreshListener() {
             @Override
             public void onHeaderRefresh(AbPullToRefreshView view) {
-                initData();
+                initListData();
             }
         });
         //下拉加在更多
@@ -84,21 +112,96 @@ public class TopicFragment extends BaseFragment {
 
     @Override
     public void initData() {
-        mCurrentPage = 0;
-        mTopicList = getDataFromBmob(mCurrentPage, mSize);
+        mTopicList = new ArrayList<>();
         mTopicAdapter = new TopicAdapter(getActivity(), mTopicList);
         mLvPost.setAdapter(mTopicAdapter);
-        mAbPullToRefresh.onHeaderRefreshFinish();
+        mLvPost.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                final Topic topic = mTopicList.get(i);
+                new MaterialDialog.Builder(getActivity())
+                        .title(topic.getTitle())
+                        .content("确定要删除该话题？")
+                        .positiveText("删除")
+                        .negativeText("取消")
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                deleteTopic(topic);
+                            }
+                        })
+                        .show();
+                return true;
+            }
+        });
+        initListData();
+//        mTopicList = getDataFromTest(mCurrentPage, mSize);
+//        mAbPullToRefresh.onHeaderRefreshFinish();
+    }
+
+    private void deleteTopic(Topic topic) {
+        mTopicList.remove(topic);
+        mTopicAdapter.updataList(mTopicList);
+    }
+
+    private void initListData() {
+        mCurrentPage = 0;
+        getDataFromBmob(TYPE_INIT_DATA, mCurrentPage, mSize);
     }
 
     private void getMoreData() {
         mCurrentPage++;
-        mTopicList.addAll(getDataFromBmob(mCurrentPage, mSize));
+        mTopicList.addAll(getDataFromTest(mCurrentPage, mSize));
         mTopicAdapter.updataList(mTopicList);
         mAbPullToRefresh.onFooterLoadFinish();
     }
 
-    private List<Topic> getDataFromBmob(int currentPage, int size) {
+    /**
+     * 正式用的数据
+     *
+     * @param currentPage
+     * @param size
+     */
+    private void getDataFromBmob(final int type, int currentPage, int size) {
+        mLoadingPD.show();
+        BmobQuery<Topic> query = new BmobQuery<Topic>();
+        //返回size条数据，如果不加上这条语句，默认返回10条数据
+        query.setLimit(size);
+        query.setSkip(currentPage * size); // 忽略前currentPage * size条数据（即前currentPage页数据结果）
+        //执行查询方法
+        query.findObjects(new FindListener<Topic>() {
+            @Override
+            public void done(List<Topic> topicList, BmobException e) {
+                if (e == null) {
+                    mLoadingPD.dismiss();
+                    if (topicList != null && topicList.size() > 0) {
+                        if (type == TYPE_INIT_DATA) {
+                            mTopicList = topicList;
+                        } else if (type == TYPE_GET_MORE_DATA) {
+                            mTopicList.addAll(topicList);
+                        }
+                        mTopicAdapter.updataList(mTopicList);
+                        mAbPullToRefresh.onHeaderRefreshFinish();
+                        mAbPullToRefresh.onFooterLoadFinish();
+                    }
+                } else {
+                    mLoadingPD.dismiss();
+                    mAbPullToRefresh.onHeaderRefreshFinish();
+                    mAbPullToRefresh.onFooterLoadFinish();
+                    ErrorUtil.showErrorCode(getActivity(), e);
+                }
+            }
+        });
+    }
+
+    /**
+     * 测试用的数据
+     *
+     * @param currentPage
+     * @param size
+     * @return
+     */
+    private List<Topic> getDataFromTest(int currentPage, int size) {
         mLoadingPD.show();
         List<Topic> topicList = new ArrayList<Topic>();
         for (int i = 0; i < size; i++) {
@@ -156,46 +259,205 @@ public class TopicFragment extends BaseFragment {
         super.onClick(view);
         switch (view.getId()) {
             case R.id.fab1:// 文字
-                createTopic(TopicType.TEXT);
+                createTopicDialog(TopicType.TEXT);
+                dialogText.show();
                 break;
             case R.id.fab2:// 图片
-                createTopic(TopicType.IMAGE);
+                createTopicDialog(TopicType.IMAGE);
+                dialogImage.show();
                 break;
             case R.id.fab3:// 提问
-                createTopic(TopicType.QUESTION);
+                createTopicDialog(TopicType.QUESTION);
+                dialogQuestion.show();
                 break;
             default:
                 break;
         }
     }
 
-    private void createTopic(TopicType type) {
+    /**
+     * 新建话题对话框
+     *
+     * @param type
+     */
+    private void createTopicDialog(TopicType type) {
         boolean wrapInScrollView = true;
         mFabMenu.close(true);
         switch (type) {
             case TEXT:
-                new MaterialDialog.Builder(getActivity())
+                View viewDialogText = LayoutInflater.from(getActivity()).inflate(R.layout.layout_dialog_text, null);
+                edtTitleText = ButterKnife.findById(viewDialogText, R.id.edtTitle);
+                edtContentText = ButterKnife.findById(viewDialogText, R.id.edtContent);
+                dialogText = new MaterialDialog.Builder(getActivity())
                         .title("文字")
-                        .customView(R.layout.layout_dialog_text, wrapInScrollView)
+                        .customView(viewDialogText, wrapInScrollView)
                         .positiveText("创建")
-                        .show();
+                        .autoDismiss(false)
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                createTextTopic(edtTitleText.getText().toString().trim(), edtContentText.getText().toString().trim());
+                            }
+                        }).build();
                 break;
             case IMAGE:
-                new MaterialDialog.Builder(getActivity())
+                View viewDialogImage = LayoutInflater.from(getActivity()).inflate(R.layout.layout_dialog_image, null);
+                edtTitleImage = ButterKnife.findById(viewDialogImage, R.id.edtTitle);
+                edtContentImage = ButterKnife.findById(viewDialogImage, R.id.edtContent);
+                ivAddImage = ButterKnife.findById(viewDialogImage, R.id.ivAddImage);
+                dialogImage = new MaterialDialog.Builder(getActivity())
                         .title("图片")
-                        .customView(R.layout.layout_dialog_image, wrapInScrollView)
+                        .customView(viewDialogImage, wrapInScrollView)
                         .positiveText("创建")
-                        .show();
+                        .autoDismiss(false)
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                createImageTopic(edtTitleImage.getText().toString().trim(), edtContentImage.getText().toString().trim());
+                            }
+                        }).build();
                 break;
             case QUESTION:
-                new MaterialDialog.Builder(getActivity())
+                View viewDialogQuestion = LayoutInflater.from(getActivity()).inflate(R.layout.layout_dialog_question, null);
+                edtTitleQuestion = ButterKnife.findById(viewDialogQuestion, R.id.edtTitle);
+                edtContentQuestion = ButterKnife.findById(viewDialogQuestion, R.id.edtContent);
+                dialogQuestion = new MaterialDialog.Builder(getActivity())
                         .title("提问")
-                        .customView(R.layout.layout_dialog_question, wrapInScrollView)
+                        .customView(viewDialogQuestion, wrapInScrollView)
                         .positiveText("创建")
-                        .show();
+                        .autoDismiss(false)
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                createQuestionTopic(edtTitleQuestion.getText().toString().trim(), edtContentQuestion.getText().toString().trim());
+                            }
+                        }).build();
                 break;
             default:
                 break;
         }
+    }
+
+    /**
+     * 创建文字话题
+     *
+     * @param title   标题
+     * @param content 内容
+     */
+    private void createTextTopic(String title, String content) {
+        if (TextUtils.isEmpty(title)) {
+            showToast("请输入标题");
+            return;
+        }
+        if (TextUtils.isEmpty(content)) {
+            showToast("请输入内容");
+            return;
+        }
+        Topic topic = new Topic();
+        topic.setTitle(title);
+        topic.setContent(content);
+        topic.setType(TopicType.TEXT);
+        topic.setCreator(mCurrentUser);
+        topic.setPostNum(0);
+
+        dialogText.dismiss();
+        mLoadingPD.show();
+        topic.save(new SaveListener<String>() {
+            @Override
+            public void done(String s, BmobException e) {
+                if (e == null) {
+                    mLoadingPD.dismiss();
+                    showToast("创建成功!");
+                    initListData();
+                } else {
+                    mLoadingPD.dismiss();
+                    ErrorUtil.showErrorCode(getActivity(), e);
+                }
+            }
+        });
+    }
+
+    /**
+     * 创建图片话题
+     *
+     * @param title   标题
+     * @param content 内容
+     */
+    private void createImageTopic(String title, String content) {
+        if (TextUtils.isEmpty(title)) {
+            showToast("请输入标题");
+            return;
+        }
+        if (TextUtils.isEmpty(content)) {
+            showToast("请输入内容");
+            return;
+        }
+        Topic topic = new Topic();
+        topic.setTitle(title);
+        topic.setContent(content);
+        topic.setType(TopicType.IMAGE);
+        topic.setCreator(mCurrentUser);
+        topic.setPostNum(0);
+
+        dialogImage.dismiss();
+        mLoadingPD.show();
+        topic.save(new SaveListener<String>() {
+            @Override
+            public void done(String s, BmobException e) {
+                if (e == null) {
+                    mLoadingPD.dismiss();
+                    showToast("创建成功!");
+                    initListData();
+                } else {
+                    mLoadingPD.dismiss();
+                    ErrorUtil.showErrorCode(getActivity(), e);
+                }
+            }
+        });
+    }
+
+    /**
+     * 创建提问话题
+     *
+     * @param title   标题
+     * @param content 内容
+     */
+    private void createQuestionTopic(String title, String content) {
+        if (TextUtils.isEmpty(title)) {
+            showToast("请输入问题");
+            return;
+        }
+        if (TextUtils.isEmpty(content)) {
+            showToast("请输入内容");
+            return;
+        }
+        Topic topic = new Topic();
+        topic.setTitle(title);
+        topic.setContent(content);
+        topic.setType(TopicType.QUESTION);
+        topic.setCreator(mCurrentUser);
+        topic.setPostNum(0);
+
+        dialogQuestion.dismiss();
+        mLoadingPD.show();
+        topic.save(new SaveListener<String>() {
+            @Override
+            public void done(String s, BmobException e) {
+                if (e == null) {
+                    mLoadingPD.dismiss();
+                    showToast("创建成功!");
+                    initListData();
+                } else {
+                    mLoadingPD.dismiss();
+                    ErrorUtil.showErrorCode(getActivity(), e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View rootView = super.onCreateView(inflater, container, savedInstanceState);
+        return rootView;
     }
 }
