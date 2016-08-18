@@ -10,6 +10,7 @@
     <color name="blue_dark1">#45a8ed</color>
     <color name="blue_dark2">#3a8ec9</color>
     <color name="white">#FFFF</color>
+    <color name="white_dark1">#d7d7d7</color>
     <color name="red">#ce1b20</color>
     <color name="red_dark">#ae1418</color>
     <!--灰色背景白底色-->

@@ -3,7 +3,6 @@ package com.sheepyang.schoolmemory.fragment;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +22,7 @@ import com.sheepyang.schoolmemory.bean.Topic;
 import com.sheepyang.schoolmemory.bean.TopicType;
 import com.sheepyang.schoolmemory.util.ErrorUtil;
 import com.sheepyang.schoolmemory.view.abView.AbPullToRefreshView;
+import com.sheepyang.schoolmemory.view.dialog.GetPhotoDialog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,6 +64,7 @@ public class TopicFragment extends BaseFragment {
     private MaterialDialog dialogText;
     private MaterialDialog dialogImage;
     private MaterialDialog dialogQuestion;
+    private GetPhotoDialog getPhotoDialog;
 
     @Override
     public int getLayoutId() {
@@ -101,9 +102,9 @@ public class TopicFragment extends BaseFragment {
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
                 if (firstVisibleItem > mPreviousVisibleItem) {
-                    mFabMenu.hideMenu(true);
+//                    mFabMenu.hideMenu(true);
                 } else if (firstVisibleItem < mPreviousVisibleItem) {
-                    mFabMenu.showMenu(true);
+//                    mFabMenu.showMenu(true);
                 }
                 mPreviousVisibleItem = firstVisibleItem;
             }
@@ -164,7 +165,7 @@ public class TopicFragment extends BaseFragment {
      */
     private void getDataFromBmob(final int type, int currentPage, int size) {
         mLoadingPD.show();
-        BmobQuery<Topic> query = new BmobQuery<Topic>();
+        BmobQuery<Topic> query = new BmobQuery<>();
         //返回size条数据，如果不加上这条语句，默认返回10条数据
         query.setLimit(size);
         query.setSkip(currentPage * size); // 忽略前currentPage * size条数据（即前currentPage页数据结果）
@@ -174,22 +175,26 @@ public class TopicFragment extends BaseFragment {
             public void done(List<Topic> topicList, BmobException e) {
                 if (e == null) {
                     mLoadingPD.dismiss();
-                    if (topicList != null && topicList.size() > 0) {
-                        if (type == TYPE_INIT_DATA) {
+                    if (type == TYPE_INIT_DATA) {
+                        if (topicList != null && topicList.size() > 0) {
                             mTopicList = topicList;
-                        } else if (type == TYPE_GET_MORE_DATA) {
-                            mTopicList.addAll(topicList);
+                        } else {
+                            mAbPullToRefresh.setNodata("暂无数据");
+                            mAbPullToRefresh.setLoadMoreEnable(false);
                         }
-                        mTopicAdapter.updataList(mTopicList);
-                        mAbPullToRefresh.onHeaderRefreshFinish();
-                        mAbPullToRefresh.onFooterLoadFinish();
+                    } else if (type == TYPE_GET_MORE_DATA) {
+                        if (topicList != null && topicList.size() > 0) {
+                            mTopicList.addAll(topicList);
+                        } else {
+                            showToast("没有更多数据啦");
+                        }
                     }
                 } else {
                     mLoadingPD.dismiss();
-                    mAbPullToRefresh.onHeaderRefreshFinish();
-                    mAbPullToRefresh.onFooterLoadFinish();
                     ErrorUtil.showErrorCode(getActivity(), e);
                 }
+                mAbPullToRefresh.onHeaderRefreshFinish();
+                mAbPullToRefresh.onFooterLoadFinish();
             }
         });
     }
@@ -270,6 +275,12 @@ public class TopicFragment extends BaseFragment {
                 createTopicDialog(TopicType.QUESTION);
                 dialogQuestion.show();
                 break;
+            case R.id.ivAddImage:// 添加图片
+                if (getPhotoDialog == null)
+                    getPhotoDialog = new GetPhotoDialog(getActivity());
+                getPhotoDialog.setName("ivAddImage");
+                getPhotoDialog.show();
+                break;
             default:
                 break;
         }
@@ -305,6 +316,7 @@ public class TopicFragment extends BaseFragment {
                 edtTitleImage = ButterKnife.findById(viewDialogImage, R.id.edtTitle);
                 edtContentImage = ButterKnife.findById(viewDialogImage, R.id.edtContent);
                 ivAddImage = ButterKnife.findById(viewDialogImage, R.id.ivAddImage);
+                ivAddImage.setOnClickListener(this);
                 dialogImage = new MaterialDialog.Builder(getActivity())
                         .title("图片")
                         .customView(viewDialogImage, wrapInScrollView)

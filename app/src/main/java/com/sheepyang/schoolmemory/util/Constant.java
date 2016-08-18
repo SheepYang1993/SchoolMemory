@@ -10,4 +10,9 @@ public class Constant {
     // Action
     public static final String EXIT_APP_ACTION = "com.sheepyang.schoolmemory.exit_app";//退出APP
     public static final String EXIT_UI_ACTION = "com.sheepyang.schoolmemory.exit_ui";//关闭UI
+
+    //获取照片
+    public static final int TOALUBM = 2001;//相册
+    public static final int TOCAMARA = 2002;//拍照
+    public static final int TOCUT = 2003;//图片裁剪
 }
