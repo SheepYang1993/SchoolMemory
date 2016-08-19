@@ -139,7 +139,11 @@ public class TopicAdapter extends BaseAdapter {
         }
         switch (type) {
             case TYPE_TEXT:
+                vh.tvQuestion.setVisibility(View.GONE);
+                setData(vh, position);
+                break;
             case TYPE_QUESTION:
+                vh.tvQuestion.setVisibility(View.VISIBLE);
                 setData(vh, position);
                 break;
             case TYPE_IMAGE1:
@@ -159,6 +163,16 @@ public class TopicAdapter extends BaseAdapter {
 
     private void setData(ViewHolder vh, int position) {
         Topic topic = mTopicList.get(position);
+        String nick = topic.getCreator().getNick();
+        if (nick != null && AppUtil.isMobileNO(nick)) {
+            nick = nick.replaceAll("(\\d{3})\\d{4}(\\d{4})", "$1****$2");
+        }
+        if (nick != null && !TextUtils.isEmpty(nick)) {
+            vh.tvCreatorName.setText("题主:" + nick);
+            vh.tvCreatorName.setVisibility(View.VISIBLE);
+        } else {
+            vh.tvCreatorName.setVisibility(View.GONE);
+        }
         // 设置头像
         if (TextUtils.isEmpty(topic.getCreator().getAvatar())) {
             Glide.with(mContext.getApplicationContext())
@@ -186,6 +200,16 @@ public class TopicAdapter extends BaseAdapter {
 
     private void setData(ViewHolder1 vh, int position) {
         Topic topic = mTopicList.get(position);
+        String nick = topic.getCreator().getNick();
+        if (nick != null && AppUtil.isMobileNO(nick)) {
+            nick = nick.replaceAll("(\\d{3})\\d{4}(\\d{4})", "$1****$2");
+        }
+        if (nick != null && !TextUtils.isEmpty(nick)) {
+            vh.tvCreatorName.setText("题主:" + nick);
+            vh.tvCreatorName.setVisibility(View.VISIBLE);
+        } else {
+            vh.tvCreatorName.setVisibility(View.GONE);
+        }
         // 设置头像
         if (TextUtils.isEmpty(topic.getCreator().getAvatar())) {
             Glide.with(mContext.getApplicationContext())
@@ -214,6 +238,7 @@ public class TopicAdapter extends BaseAdapter {
         List<String> imageList = topic.getImageList();
         if (imageList != null) {
             if (imageList.size() == 1) {
+                vh.ivImg11.setVisibility(View.VISIBLE);
                 WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
                 int windowWidth = wm.getDefaultDisplay().getWidth();
                 int imageWidth = windowWidth - AppUtil.dip2px(mContext, 60);
@@ -227,12 +252,26 @@ public class TopicAdapter extends BaseAdapter {
                         .placeholder(R.drawable.image_progress_rorate)
                         .fitCenter()
                         .into(vh.ivImg11);
+            } else {
+                vh.ivImg11.setVisibility(View.GONE);
             }
+        } else {
+            vh.ivImg11.setVisibility(View.GONE);
         }
     }
 
     private void setData(ViewHolder2 vh, int position) {
         Topic topic = mTopicList.get(position);
+        String nick = topic.getCreator().getNick();
+        if (nick != null && AppUtil.isMobileNO(nick)) {
+            nick = nick.replaceAll("(\\d{3})\\d{4}(\\d{4})", "$1****$2");
+        }
+        if (nick != null && !TextUtils.isEmpty(nick)) {
+            vh.tvCreatorName.setText("题主:" + nick);
+            vh.tvCreatorName.setVisibility(View.VISIBLE);
+        } else {
+            vh.tvCreatorName.setVisibility(View.GONE);
+        }
         // 设置头像
         if (TextUtils.isEmpty(topic.getCreator().getAvatar())) {
             Glide.with(mContext.getApplicationContext())
@@ -292,6 +331,16 @@ public class TopicAdapter extends BaseAdapter {
 
     private void setData(ViewHolder3 vh, int position) {
         Topic topic = mTopicList.get(position);
+        String nick = topic.getCreator().getNick();
+        if (nick != null && AppUtil.isMobileNO(nick)) {
+            nick = nick.replaceAll("(\\d{3})\\d{4}(\\d{4})", "$1****$2");
+        }
+        if (nick != null && !TextUtils.isEmpty(nick)) {
+            vh.tvCreatorName.setText("题主:" + nick);
+            vh.tvCreatorName.setVisibility(View.VISIBLE);
+        } else {
+            vh.tvCreatorName.setVisibility(View.GONE);
+        }
         // 设置头像
         if (TextUtils.isEmpty(topic.getCreator().getAvatar())) {
             Glide.with(mContext.getApplicationContext())
@@ -371,6 +420,10 @@ public class TopicAdapter extends BaseAdapter {
     }
 
     static class ViewHolder {
+        @BindView(R.id.tvQuestion)
+        TextView tvQuestion;
+        @BindView(R.id.tvCreatorName)
+        TextView tvCreatorName;
         @BindView(R.id.civAvatar)
         CircleImageView civAvatar;
         @BindView(R.id.tvTitle)
@@ -388,6 +441,8 @@ public class TopicAdapter extends BaseAdapter {
     }
 
     static class ViewHolder1 {
+        @BindView(R.id.tvCreatorName)
+        TextView tvCreatorName;
         @BindView(R.id.ivImg11)
         ImageView ivImg11;
         @BindView(R.id.civAvatar)
@@ -407,6 +462,8 @@ public class TopicAdapter extends BaseAdapter {
     }
 
     static class ViewHolder2 {
+        @BindView(R.id.tvCreatorName)
+        TextView tvCreatorName;
         @BindView(R.id.ivImg21)
         ImageView ivImg21;
         @BindView(R.id.ivImg22)
@@ -428,6 +485,8 @@ public class TopicAdapter extends BaseAdapter {
     }
 
     static class ViewHolder3 {
+        @BindView(R.id.tvCreatorName)
+        TextView tvCreatorName;
         @BindView(R.id.ivImg31)
         ImageView ivImg31;
         @BindView(R.id.ivImg32)

@@ -12,12 +12,13 @@
         android:layout_centerInParent="true" />
 
     <TextView
+        android:id="@+id/tvNick"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/civHeadAvatar"
         android:layout_centerInParent="true"
         android:padding="10dp"
-        android:text="校园纪念册,留住美好回忆"
+        android:text=""
         android:textColor="@android:color/white"
         android:textSize="16sp" />
 

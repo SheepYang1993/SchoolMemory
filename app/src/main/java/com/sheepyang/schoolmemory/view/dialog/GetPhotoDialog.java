@@ -97,11 +97,7 @@ public class GetPhotoDialog extends Dialog {
         void onPositiveClick(int position);
     }
 
-    public onPositiveClickListener getListener() {
-        return mListener;
-    }
-
-    public void setonPositiveClick(onPositiveClickListener mListener) {
+    public void setOnPositiveClickListener(onPositiveClickListener mListener) {
         this.mListener = mListener;
     }
 

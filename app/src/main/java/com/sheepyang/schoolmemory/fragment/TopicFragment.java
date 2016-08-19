@@ -1,5 +1,9 @@
 package com.sheepyang.schoolmemory.fragment;
 
+import android.animation.Keyframe;
+import android.animation.ObjectAnimator;
+import android.animation.PropertyValuesHolder;
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -12,6 +16,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
@@ -30,7 +35,6 @@ import com.sheepyang.schoolmemory.util.AppUtil;
 import com.sheepyang.schoolmemory.util.Constant;
 import com.sheepyang.schoolmemory.util.ErrorUtil;
 import com.sheepyang.schoolmemory.util.FileUtil;
-import com.sheepyang.schoolmemory.util.PLog;
 import com.sheepyang.schoolmemory.view.abView.AbPullToRefreshView;
 import com.sheepyang.schoolmemory.view.dialog.GetPhotoDialog;
 
@@ -43,9 +47,11 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.datatype.BmobFile;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.SaveListener;
+import cn.bmob.v3.listener.UploadFileListener;
 
 /**
  * Created by SheepYang on 2016/8/11.
@@ -65,7 +71,7 @@ public class TopicFragment extends BaseFragment {
     private EditText edtContentImage;
     private EditText edtTitleQuestion;
     private EditText edtContentQuestion;
-    private ImageView ivAddImage;
+    private ImageView mIvAddImage;
 
     private static TopicFragment mTopicFragment;
     private List<Topic> mTopicList;
@@ -77,9 +83,10 @@ public class TopicFragment extends BaseFragment {
     private MaterialDialog dialogImage;
     private MaterialDialog dialogQuestion;
     private GetPhotoDialog getPhotoDialog;
-    private Bitmap topicImgBitmap;
+    private Bitmap mTopicImgBitmap;
     public boolean mIsOnActivityResult = false;
     private Uri mImageCropUri;
+    private int mLastItem;
 
     @Override
     public int getLayoutId() {
@@ -112,6 +119,11 @@ public class TopicFragment extends BaseFragment {
         mLvTopic.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
+                if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
+                    if (view.getLastVisiblePosition() == view.getCount() - 1) {
+                        getMoreData();
+                    }
+                }
             }
 
             @Override
@@ -122,6 +134,7 @@ public class TopicFragment extends BaseFragment {
 //                    mFabMenu.showMenu(true);
                 }
                 mPreviousVisibleItem = firstVisibleItem;
+                mLastItem = firstVisibleItem + visibleItemCount - 1;
             }
         });
     }
@@ -178,6 +191,7 @@ public class TopicFragment extends BaseFragment {
         mLoadingPD.show();
         BmobQuery<Topic> query = new BmobQuery<>();
         query.order("-updatedAt");
+        query.include("creator[nick|avatar]");// 查询出作者昵称/头像
         //返回size条数据，如果不加上这条语句，默认返回10条数据
         query.setLimit(size);
         if (type == TYPE_GET_MORE_DATA) {// 加载更多
@@ -302,8 +316,8 @@ public class TopicFragment extends BaseFragment {
             case R.id.ivAddImage:// 添加图片
                 if (getPhotoDialog == null)
                     getPhotoDialog = new GetPhotoDialog(getActivity());
-                getPhotoDialog.setName("ivAddImage");
-                getPhotoDialog.setonPositiveClick(new GetPhotoDialog.onPositiveClickListener() {
+                getPhotoDialog.setName("mIvAddImage");
+                getPhotoDialog.setOnPositiveClickListener(new GetPhotoDialog.onPositiveClickListener() {
                     @Override
                     public void onPositiveClick(int position) {
                         // position: 1相册 2相机 3取消
@@ -345,11 +359,12 @@ public class TopicFragment extends BaseFragment {
                         }).build();
                 break;
             case IMAGE:
+                mTopicImgBitmap = null;
                 View viewDialogImage = LayoutInflater.from(getActivity()).inflate(R.layout.layout_dialog_image, null);
                 edtTitleImage = ButterKnife.findById(viewDialogImage, R.id.edtTitle);
                 edtContentImage = ButterKnife.findById(viewDialogImage, R.id.edtContent);
-                ivAddImage = ButterKnife.findById(viewDialogImage, R.id.ivAddImage);
-                ivAddImage.setOnClickListener(this);
+                mIvAddImage = ButterKnife.findById(viewDialogImage, R.id.ivAddImage);
+                mIvAddImage.setOnClickListener(this);
                 dialogImage = new MaterialDialog.Builder(getActivity())
                         .title("图片")
                         .customView(viewDialogImage, wrapInScrollView)
@@ -422,6 +437,58 @@ public class TopicFragment extends BaseFragment {
         });
     }
 
+    public static ObjectAnimator tada(View view) {
+        return tada(view, 1f);
+    }
+
+    public static ObjectAnimator tada(View view, float shakeFactor) {
+
+        PropertyValuesHolder pvhScaleX = PropertyValuesHolder.ofKeyframe(View.SCALE_X,
+                Keyframe.ofFloat(0f, 1f),
+                Keyframe.ofFloat(.1f, .9f),
+                Keyframe.ofFloat(.2f, .9f),
+                Keyframe.ofFloat(.3f, 1.1f),
+                Keyframe.ofFloat(.4f, 1.1f),
+                Keyframe.ofFloat(.5f, 1.1f),
+                Keyframe.ofFloat(.6f, 1.1f),
+                Keyframe.ofFloat(.7f, 1.1f),
+                Keyframe.ofFloat(.8f, 1.1f),
+                Keyframe.ofFloat(.9f, 1.1f),
+                Keyframe.ofFloat(1f, 1f)
+        );
+
+        PropertyValuesHolder pvhScaleY = PropertyValuesHolder.ofKeyframe(View.SCALE_Y,
+                Keyframe.ofFloat(0f, 1f),
+                Keyframe.ofFloat(.1f, .9f),
+                Keyframe.ofFloat(.2f, .9f),
+                Keyframe.ofFloat(.3f, 1.1f),
+                Keyframe.ofFloat(.4f, 1.1f),
+                Keyframe.ofFloat(.5f, 1.1f),
+                Keyframe.ofFloat(.6f, 1.1f),
+                Keyframe.ofFloat(.7f, 1.1f),
+                Keyframe.ofFloat(.8f, 1.1f),
+                Keyframe.ofFloat(.9f, 1.1f),
+                Keyframe.ofFloat(1f, 1f)
+        );
+
+        PropertyValuesHolder pvhRotate = PropertyValuesHolder.ofKeyframe(View.ROTATION,
+                Keyframe.ofFloat(0f, 0f),
+                Keyframe.ofFloat(.1f, -3f * shakeFactor),
+                Keyframe.ofFloat(.2f, -3f * shakeFactor),
+                Keyframe.ofFloat(.3f, 3f * shakeFactor),
+                Keyframe.ofFloat(.4f, -3f * shakeFactor),
+                Keyframe.ofFloat(.5f, 3f * shakeFactor),
+                Keyframe.ofFloat(.6f, -3f * shakeFactor),
+                Keyframe.ofFloat(.7f, 3f * shakeFactor),
+                Keyframe.ofFloat(.8f, -3f * shakeFactor),
+                Keyframe.ofFloat(.9f, 3f * shakeFactor),
+                Keyframe.ofFloat(1f, 0)
+        );
+
+        return ObjectAnimator.ofPropertyValuesHolder(view, pvhScaleX, pvhScaleY, pvhRotate).
+                setDuration(1000);
+    }
+
     /**
      * 创建图片话题
      *
@@ -437,7 +504,19 @@ public class TopicFragment extends BaseFragment {
             showToast("请输入内容");
             return;
         }
-        Topic topic = new Topic();
+        if (mTopicImgBitmap == null) {
+            mIvAddImage.setImageResource(R.drawable.btn_add_image_wrong);
+            tada(mIvAddImage).start();
+            showToast("请添加一张图片");
+            return;
+        }
+        final String picPath = AppUtil.getRealFilePath(getActivity(), mImageCropUri);
+        if (picPath == null) {
+            showToast("图片损毁，请重新添加图片");
+            return;
+        }
+
+        final Topic topic = new Topic();
         topic.setTitle(title);
         topic.setContent(content);
         topic.setType(TopicType.IMAGE);
@@ -446,17 +525,38 @@ public class TopicFragment extends BaseFragment {
 
         dialogImage.dismiss();
         mLoadingPD.show();
-        topic.save(new SaveListener<String>() {
+        final BmobFile bmobFile = new BmobFile(new File(picPath));
+        bmobFile.uploadblock(new UploadFileListener() {
+
             @Override
-            public void done(String s, BmobException e) {
+            public void done(BmobException e) {
                 if (e == null) {
-                    mLoadingPD.dismiss();
-                    showToast("创建成功!");
-                    initListData();
+                    //bmobFile.getFileUrl()--返回的上传文件的完整地址
+                    List<String> imageList = new ArrayList<String>();
+                    imageList.add(bmobFile.getFileUrl());
+                    topic.setImageList(imageList);
+                    topic.save(new SaveListener<String>() {
+                        @Override
+                        public void done(String s, BmobException e) {
+                            if (e == null) {
+                                mLoadingPD.dismiss();
+                                showToast("创建成功!");
+                                initListData();
+                            } else {
+                                mLoadingPD.dismiss();
+                                ErrorUtil.showErrorCode(getActivity(), e);
+                            }
+                        }
+                    });
                 } else {
                     mLoadingPD.dismiss();
                     ErrorUtil.showErrorCode(getActivity(), e);
                 }
+            }
+
+            @Override
+            public void onProgress(Integer value) {
+                // 返回的上传进度（百分比）
             }
         });
     }
@@ -516,8 +616,11 @@ public class TopicFragment extends BaseFragment {
             intent.putExtra("crop", "true");
             intent.putExtra("aspectX", 1);
             intent.putExtra("aspectY", 1);
-            intent.putExtra("outputX", 800);
-            intent.putExtra("outputY", 800);
+            intent.putExtra("outputX", 480);
+            intent.putExtra("outputY", 480);
+            // 裁剪图片过小，放大，去除黑边
+            intent.putExtra("scale", true);
+            intent.putExtra("scaleUpIfNeeded", true);
             intent.putExtra("return-data", false);
             String filePath = "";
             String Path = FileUtil.getImageCAmearDir(getActivity());
@@ -538,7 +641,6 @@ public class TopicFragment extends BaseFragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        PLog.i("onActivityResult");
         switch (requestCode) {
             case Constant.TO_ALUBM:
                 if (data != null) {
@@ -547,10 +649,19 @@ public class TopicFragment extends BaseFragment {
                 }
                 break;
             case Constant.TO_CAMARA:
+                if (resultCode != Activity.RESULT_CANCELED) {
+                    String path = getPhotoDialog.getCameraPath();
+                    if (TextUtils.isEmpty(path)) {
+                        showToast("相机异常，请重新拍照！");
+                        return;
+                    }
+                    Uri originalUri = Uri.fromFile(new File(path));
+                    startPhotoZoom(originalUri);
+                }
                 break;
             case Constant.TO_CUT:
                 if (data != null) {
-                    getImageToView(data);
+                    getImageToView(mIvAddImage, data);
                 }
                 break;
             default:
@@ -564,17 +675,15 @@ public class TopicFragment extends BaseFragment {
      *
      * @param data
      */
-    private void getImageToView(Intent data) {
+    private void getImageToView(ImageView image, Intent data) {
         Bundle extras = data.getExtras();
         if (extras != null) {
             try {
-                topicImgBitmap = BitmapFactory.decodeStream(getActivity().getContentResolver().openInputStream(mImageCropUri));
-                topicImgBitmap.setHeight(AppUtil.dip2px(getActivity(), 50));
-                topicImgBitmap.setWidth(AppUtil.dip2px(getActivity(), 50));
+                mTopicImgBitmap = BitmapFactory.decodeStream(getActivity().getContentResolver().openInputStream(mImageCropUri));
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
-            ivAddImage.setImageBitmap(topicImgBitmap);
+            image.setImageBitmap(mTopicImgBitmap);
         }
     }
 

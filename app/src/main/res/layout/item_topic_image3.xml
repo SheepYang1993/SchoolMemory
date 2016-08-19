@@ -38,6 +38,17 @@
                 android:textSize="16sp" />
 
             <TextView
+                android:id="@+id/tvCreatorName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:singleLine="true"
+                android:text="题主:13049867574"
+                android:textColor="#858585"
+                android:textSize="12sp"
+                android:visibility="gone" />
+
+            <TextView
                 android:id="@+id/tvPostNum"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
