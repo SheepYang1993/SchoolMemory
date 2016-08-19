@@ -39,6 +39,9 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     private Fragment[] mFragments;
     private int currentIndex;//当前Fragment的位置
     private GetPhotoDialog getPhotoDialog;
+    private TopicFragment mTopicFragment;
+    private PersonFragment mPersonFragment;
+    private SettingFragment mSettingFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,13 +83,13 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
      * 初始化Fragment
      */
     private void initFragment() {
-        TopicFragment topicFragment = TopicFragment.getInstance();
-        PersonFragment personFragment = PersonFragment.getInstance();
-        SettingFragment settingFragment = SettingFragment.getInstance();
+        mTopicFragment = TopicFragment.getInstance();
+        mPersonFragment = PersonFragment.getInstance();
+        mSettingFragment = SettingFragment.getInstance();
         mFragments = new Fragment[]{
-                topicFragment,
-                personFragment,
-                settingFragment
+                mTopicFragment,
+                mPersonFragment,
+                mSettingFragment
         };
     }
 
@@ -144,6 +147,14 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             }
         });
         switchFragment(0, "首页", mNavView.getMenu().getItem(0));
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (mTopicFragment != null && mTopicFragment.mIsOnActivityResult) {
+            mTopicFragment.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
     @Override

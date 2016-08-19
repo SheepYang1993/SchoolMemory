@@ -1,7 +1,7 @@
 package com.sheepyang.schoolmemory.util;
 
 /**
- * Created by Administrator on 2016/8/3.
+ * Created by SheepYang on 2016/8/3.
  */
 public class Constant {
     //Bmob APP_ID
@@ -12,7 +12,7 @@ public class Constant {
     public static final String EXIT_UI_ACTION = "com.sheepyang.schoolmemory.exit_ui";//关闭UI
 
     //获取照片
-    public static final int TOALUBM = 2001;//相册
-    public static final int TOCAMARA = 2002;//拍照
-    public static final int TOCUT = 2003;//图片裁剪
+    public static final int TO_ALUBM = 2001;//相册
+    public static final int TO_CAMARA = 2002;//拍照
+    public static final int TO_CUT = 2003;//图片裁剪
 }

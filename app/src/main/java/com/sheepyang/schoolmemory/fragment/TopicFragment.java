@@ -1,6 +1,12 @@
 package com.sheepyang.schoolmemory.fragment;
 
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -20,10 +26,16 @@ import com.sheepyang.schoolmemory.R;
 import com.sheepyang.schoolmemory.adapter.TopicAdapter;
 import com.sheepyang.schoolmemory.bean.Topic;
 import com.sheepyang.schoolmemory.bean.TopicType;
+import com.sheepyang.schoolmemory.util.AppUtil;
+import com.sheepyang.schoolmemory.util.Constant;
 import com.sheepyang.schoolmemory.util.ErrorUtil;
+import com.sheepyang.schoolmemory.util.FileUtil;
+import com.sheepyang.schoolmemory.util.PLog;
 import com.sheepyang.schoolmemory.view.abView.AbPullToRefreshView;
 import com.sheepyang.schoolmemory.view.dialog.GetPhotoDialog;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,6 +77,9 @@ public class TopicFragment extends BaseFragment {
     private MaterialDialog dialogImage;
     private MaterialDialog dialogQuestion;
     private GetPhotoDialog getPhotoDialog;
+    private Bitmap topicImgBitmap;
+    public boolean mIsOnActivityResult = false;
+    private Uri mImageCropUri;
 
     @Override
     public int getLayoutId() {
@@ -256,7 +271,7 @@ public class TopicFragment extends BaseFragment {
     }
 
     /**
-     * 获取HomeFragment单例
+     * 获取TopicFragment单例
      *
      * @return
      */
@@ -288,6 +303,15 @@ public class TopicFragment extends BaseFragment {
                 if (getPhotoDialog == null)
                     getPhotoDialog = new GetPhotoDialog(getActivity());
                 getPhotoDialog.setName("ivAddImage");
+                getPhotoDialog.setonPositiveClick(new GetPhotoDialog.onPositiveClickListener() {
+                    @Override
+                    public void onPositiveClick(int position) {
+                        // position: 1相册 2相机 3取消
+                        if (position == 1 || position == 2) {
+                            mIsOnActivityResult = true;
+                        }
+                    }
+                });
                 getPhotoDialog.show();
                 break;
             default:
@@ -474,6 +498,84 @@ public class TopicFragment extends BaseFragment {
                 }
             }
         });
+    }
+
+    /**
+     * 切图
+     *
+     * @param uri
+     */
+    public String startPhotoZoom(Uri uri) {
+        long time = System.currentTimeMillis();
+        String st = String.valueOf(time);
+        boolean sdCardExist = Environment.getExternalStorageState().equals(
+                Environment.MEDIA_MOUNTED); // 判断sd卡是否存在
+        if (sdCardExist) {
+            Intent intent = new Intent("com.android.camera.action.CROP");
+            intent.setDataAndType(uri, "image/*");
+            intent.putExtra("crop", "true");
+            intent.putExtra("aspectX", 1);
+            intent.putExtra("aspectY", 1);
+            intent.putExtra("outputX", 800);
+            intent.putExtra("outputY", 800);
+            intent.putExtra("return-data", false);
+            String filePath = "";
+            String Path = FileUtil.getImageCAmearDir(getActivity());
+            filePath = Path + "/" + st + "icon.jpg";
+            File out = new File(filePath);
+            mImageCropUri = Uri.fromFile(out);
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageCropUri);
+            intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
+            intent.putExtra("noFaceDetection", true);
+            mIsOnActivityResult = true;
+            startActivityForResult(intent, Constant.TO_CUT);
+            return filePath;
+        } else {
+            return "";
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        PLog.i("onActivityResult");
+        switch (requestCode) {
+            case Constant.TO_ALUBM:
+                if (data != null) {
+                    Uri originalUri = data.getData(); // 获得图片的uri
+                    startPhotoZoom(originalUri);
+                }
+                break;
+            case Constant.TO_CAMARA:
+                break;
+            case Constant.TO_CUT:
+                if (data != null) {
+                    getImageToView(data);
+                }
+                break;
+            default:
+                break;
+        }
+        mIsOnActivityResult = false;
+    }
+
+    /**
+     * 显示图片
+     *
+     * @param data
+     */
+    private void getImageToView(Intent data) {
+        Bundle extras = data.getExtras();
+        if (extras != null) {
+            try {
+                topicImgBitmap = BitmapFactory.decodeStream(getActivity().getContentResolver().openInputStream(mImageCropUri));
+                topicImgBitmap.setHeight(AppUtil.dip2px(getActivity(), 50));
+                topicImgBitmap.setWidth(AppUtil.dip2px(getActivity(), 50));
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+            ivAddImage.setImageBitmap(topicImgBitmap);
+        }
     }
 
     @Override

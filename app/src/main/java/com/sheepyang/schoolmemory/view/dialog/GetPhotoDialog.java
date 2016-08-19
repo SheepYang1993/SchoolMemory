@@ -25,6 +25,7 @@ public class GetPhotoDialog extends Dialog {
     private final String IMAGE_TYPE = "image/*";
     private String cameraPath;
     private String name;//没设置的话，照片名字根据时间戳来命名，设置了可以避免重复创建照片
+    private onPositiveClickListener mListener;
 
 
     public GetPhotoDialog(Context context) {
@@ -61,28 +62,48 @@ public class GetPhotoDialog extends Dialog {
         @Override
         public void onClick(View v) {
             switch (v.getId()) {
-                case R.id.photo_album:
+                case R.id.photo_album:// 相册
+                    if (mListener != null) {
+                        mListener.onPositiveClick(1);
+                    }
                     Intent getAlbum = new Intent(Intent.ACTION_GET_CONTENT);
                     getAlbum.setType(IMAGE_TYPE);
-                    ((Activity) context).startActivityForResult(getAlbum, Constant.TOALUBM);
+                    ((Activity) context).startActivityForResult(getAlbum, Constant.TO_ALUBM);
                     break;
-                case R.id.photo_camera://
+                case R.id.photo_camera:// 相机
+                    if (mListener != null) {
+                        mListener.onPositiveClick(2);
+                    }
                     if (name == null) {
                         cameraPath = CameraUtil.openCamara(
-                                context, Constant.TOCAMARA);
+                                context, Constant.TO_CAMARA);
                     } else {
                         cameraPath = CameraUtil.openCamara(
-                                context, Constant.TOCAMARA, name);
+                                context, Constant.TO_CAMARA, name);
                     }
                     PLog.d("cameraPath------------->" + cameraPath);
                     break;
-                case R.id.photo_call:
-
+                case R.id.photo_call:// 取消
+                    if (mListener != null) {
+                        mListener.onPositiveClick(3);
+                    }
                     break;
             }
             dismiss();
         }
     };
+
+    public interface onPositiveClickListener {
+        void onPositiveClick(int position);
+    }
+
+    public onPositiveClickListener getListener() {
+        return mListener;
+    }
+
+    public void setonPositiveClick(onPositiveClickListener mListener) {
+        this.mListener = mListener;
+    }
 
     public String getCameraPath() {
         return cameraPath;

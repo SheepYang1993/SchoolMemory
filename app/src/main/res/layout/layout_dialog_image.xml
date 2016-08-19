@@ -43,6 +43,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
+
+            android:adjustViewBounds="true"
+            android:maxHeight="50dp"
+            android:maxWidth="50dp"
+            android:minHeight="20dp"
+            android:minWidth="20dp"
             android:src="@drawable/add_image" />
     </LinearLayout>
 </LinearLayout>
