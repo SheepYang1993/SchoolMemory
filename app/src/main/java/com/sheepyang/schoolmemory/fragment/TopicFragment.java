@@ -44,7 +44,7 @@ public class TopicFragment extends BaseFragment {
     @BindView(R.id.abPullToRefresh)
     AbPullToRefreshView mAbPullToRefresh;
     @BindView(R.id.lvTopic)
-    ListView mLvPost;
+    ListView mLvTopic;
     @BindView(R.id.fabMenu)
     public FloatingActionMenu mFabMenu;
     private EditText edtTitleText;
@@ -94,7 +94,7 @@ public class TopicFragment extends BaseFragment {
         mFabMenu.setClosedOnTouchOutside(true);
         mFabMenu.setMenuButtonShowAnimation(AnimationUtils.loadAnimation(getActivity(), R.anim.show_from_bottom));
         mFabMenu.setMenuButtonHideAnimation(AnimationUtils.loadAnimation(getActivity(), R.anim.hide_to_bottom));
-        mLvPost.setOnScrollListener(new AbsListView.OnScrollListener() {
+        mLvTopic.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
             }
@@ -115,8 +115,8 @@ public class TopicFragment extends BaseFragment {
     public void initData() {
         mTopicList = new ArrayList<>();
         mTopicAdapter = new TopicAdapter(getActivity(), mTopicList);
-        mLvPost.setAdapter(mTopicAdapter);
-        mLvPost.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+        mLvTopic.setAdapter(mTopicAdapter);
+        mLvTopic.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
                 final Topic topic = mTopicList.get(i);
@@ -136,8 +136,6 @@ public class TopicFragment extends BaseFragment {
             }
         });
         initListData();
-//        mTopicList = getDataFromTest(mCurrentPage, mSize);
-//        mAbPullToRefresh.onHeaderRefreshFinish();
     }
 
     private void deleteTopic(Topic topic) {
@@ -152,9 +150,7 @@ public class TopicFragment extends BaseFragment {
 
     private void getMoreData() {
         mCurrentPage++;
-        mTopicList.addAll(getDataFromTest(mCurrentPage, mSize));
-        mTopicAdapter.updataList(mTopicList);
-        mAbPullToRefresh.onFooterLoadFinish();
+        getDataFromBmob(TYPE_GET_MORE_DATA, mCurrentPage, mSize);
     }
 
     /**
@@ -166,9 +162,12 @@ public class TopicFragment extends BaseFragment {
     private void getDataFromBmob(final int type, int currentPage, int size) {
         mLoadingPD.show();
         BmobQuery<Topic> query = new BmobQuery<>();
+        query.order("-updatedAt");
         //返回size条数据，如果不加上这条语句，默认返回10条数据
         query.setLimit(size);
-        query.setSkip(currentPage * size); // 忽略前currentPage * size条数据（即前currentPage页数据结果）
+        if (type == TYPE_GET_MORE_DATA) {// 加载更多
+            query.setSkip(mTopicList.size()); // 忽略前mTopicList.size()条数据
+        }
         //执行查询方法
         query.findObjects(new FindListener<Topic>() {
             @Override
@@ -178,19 +177,29 @@ public class TopicFragment extends BaseFragment {
                     if (type == TYPE_INIT_DATA) {
                         if (topicList != null && topicList.size() > 0) {
                             mTopicList = topicList;
+                            mTopicAdapter.updataList(mTopicList);
+                            mAbPullToRefresh.setHaveData();
+                            mAbPullToRefresh.setLoadMoreEnable(true);
                         } else {
-                            mAbPullToRefresh.setNodata("暂无数据");
+                            mTopicList.clear();
+                            mTopicAdapter.updataList(mTopicList);
+                            mAbPullToRefresh.setNodata("暂无数据,点击刷新");
                             mAbPullToRefresh.setLoadMoreEnable(false);
                         }
                     } else if (type == TYPE_GET_MORE_DATA) {
                         if (topicList != null && topicList.size() > 0) {
                             mTopicList.addAll(topicList);
+                            mTopicAdapter.updataList(mTopicList);
                         } else {
-                            showToast("没有更多数据啦");
+                            mCurrentPage--;
+                            showToast("没有更多内容啦~");
                         }
                     }
                 } else {
                     mLoadingPD.dismiss();
+                    if (type == TYPE_GET_MORE_DATA) {
+                        mCurrentPage--;
+                    }
                     ErrorUtil.showErrorCode(getActivity(), e);
                 }
                 mAbPullToRefresh.onHeaderRefreshFinish();
@@ -211,7 +220,7 @@ public class TopicFragment extends BaseFragment {
         List<Topic> topicList = new ArrayList<Topic>();
         for (int i = 0; i < size; i++) {
             Topic topic = new Topic();
-            topic.setTitle("标题:" + "第" + (currentPage + 1) + "页" + "第" + (i + 1) + "条");
+            topic.setTitle("标题:" + "第" + (currentPage + 1) + "页" + "第" + (i + 1) + "条 (这是测试数据)");
             topic.setContent("第" + (currentPage + 1) + "页" + "第" + (i + 1) + "条" + "这是内容这是内容这是内容这是内容这是内容这是内容这是内容这是内容这是内容这是内容这是内容这是内容这是内容这是内容这是内容这是内容这是内容这是内容");
             topic.setCreator(mCurrentUser);
             topic.setPostNum(i);

@@ -19,6 +19,7 @@ import com.sheepyang.schoolmemory.fragment.PersonFragment;
 import com.sheepyang.schoolmemory.fragment.SettingFragment;
 import com.sheepyang.schoolmemory.util.AppUtil;
 import com.sheepyang.schoolmemory.util.Constant;
+import com.sheepyang.schoolmemory.view.dialog.GetPhotoDialog;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -37,6 +38,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     private CircleImageView mCivHeadAvatar;
     private Fragment[] mFragments;
     private int currentIndex;//当前Fragment的位置
+    private GetPhotoDialog getPhotoDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -132,11 +134,13 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                         .into(mCivHeadAvatar);
             }
         }
-        mCivHeadAvatar.setOnLongClickListener(new View.OnLongClickListener() {
+        mCivHeadAvatar.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onLongClick(View view) {
-                showToast("更改头像");
-                return true;
+            public void onClick(View view) {
+                if (getPhotoDialog == null)
+                    getPhotoDialog = new GetPhotoDialog(MainActivity.this);
+                getPhotoDialog.setName("mCivHeadAvatar");
+                getPhotoDialog.show();
             }
         });
         switchFragment(0, "首页", mNavView.getMenu().getItem(0));
