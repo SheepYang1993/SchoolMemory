@@ -18,7 +18,10 @@ import com.sheepyang.schoolmemory.R;
 import com.sheepyang.schoolmemory.bean.Topic;
 import com.sheepyang.schoolmemory.util.AppUtil;
 import com.sheepyang.schoolmemory.util.PLog;
+import com.sheepyang.schoolmemory.util.RelativeDateFormatUtil;
 
+import java.text.ParseException;
+import java.util.Calendar;
 import java.util.List;
 
 import butterknife.BindView;
@@ -193,6 +196,12 @@ public class TopicAdapter extends BaseAdapter {
         vh.tvType.setText(topic.getType().getName());
         // 话题评论数
         String postNum = "<html>共<font color=#6dcbed>" + topic.getPostNum() + "</font>条内容</html>";
+        try {
+            vh.tvCreateDate.setText("更新于" + RelativeDateFormatUtil.format(topic.getUpdatedAt(), "yyyy-MM-dd HH:mm:ss"));
+        } catch (ParseException e) {
+            vh.tvCreateDate.setText("日期格式异常");
+            e.printStackTrace();
+        }
         vh.tvPostNum.setText(Html.fromHtml(postNum));
         // 话题内容
         vh.tvContent.setText(topic.getContent());
@@ -230,6 +239,12 @@ public class TopicAdapter extends BaseAdapter {
         vh.tvType.setText(topic.getType().getName());
         // 话题评论数
         String postNum = "<html>共<font color=#6dcbed>" + topic.getPostNum() + "</font>条内容</html>";
+        try {
+            vh.tvCreateDate.setText("更新于" + RelativeDateFormatUtil.format(topic.getUpdatedAt(), "yyyy-MM-dd HH:mm:ss"));
+        } catch (ParseException e) {
+            vh.tvCreateDate.setText("日期格式异常");
+            e.printStackTrace();
+        }
         vh.tvPostNum.setText(Html.fromHtml(postNum));
         // 话题内容
         vh.tvContent.setText(topic.getContent());
@@ -292,6 +307,12 @@ public class TopicAdapter extends BaseAdapter {
         vh.tvType.setText(topic.getType().getName());
         // 话题评论数
         String postNum = "<html>共<font color=#6dcbed>" + topic.getPostNum() + "</font>条内容</html>";
+        try {
+            vh.tvCreateDate.setText("更新于" + RelativeDateFormatUtil.format(topic.getUpdatedAt(), "yyyy-MM-dd HH:mm:ss"));
+        } catch (ParseException e) {
+            vh.tvCreateDate.setText("日期格式异常");
+            e.printStackTrace();
+        }
         vh.tvPostNum.setText(Html.fromHtml(postNum));
         // 话题内容
         vh.tvContent.setText(topic.getContent());
@@ -361,6 +382,12 @@ public class TopicAdapter extends BaseAdapter {
         vh.tvType.setText(topic.getType().getName());
         // 话题评论数
         String postNum = "<html>共<font color=#6dcbed>" + topic.getPostNum() + "</font>条内容</html>";
+        try {
+            vh.tvCreateDate.setText("更新于" + RelativeDateFormatUtil.format(topic.getUpdatedAt(), "yyyy-MM-dd HH:mm:ss"));
+        } catch (ParseException e) {
+            vh.tvCreateDate.setText("日期格式异常");
+            e.printStackTrace();
+        }
         vh.tvPostNum.setText(Html.fromHtml(postNum));
         // 话题内容
         vh.tvContent.setText(topic.getContent());
@@ -420,6 +447,8 @@ public class TopicAdapter extends BaseAdapter {
     }
 
     static class ViewHolder {
+        @BindView(R.id.tvCreateDate)
+        TextView tvCreateDate;
         @BindView(R.id.tvQuestion)
         TextView tvQuestion;
         @BindView(R.id.tvCreatorName)
@@ -441,6 +470,8 @@ public class TopicAdapter extends BaseAdapter {
     }
 
     static class ViewHolder1 {
+        @BindView(R.id.tvCreateDate)
+        TextView tvCreateDate;
         @BindView(R.id.tvCreatorName)
         TextView tvCreatorName;
         @BindView(R.id.ivImg11)
@@ -462,6 +493,8 @@ public class TopicAdapter extends BaseAdapter {
     }
 
     static class ViewHolder2 {
+        @BindView(R.id.tvCreateDate)
+        TextView tvCreateDate;
         @BindView(R.id.tvCreatorName)
         TextView tvCreatorName;
         @BindView(R.id.ivImg21)
@@ -485,6 +518,8 @@ public class TopicAdapter extends BaseAdapter {
     }
 
     static class ViewHolder3 {
+        @BindView(R.id.tvCreateDate)
+        TextView tvCreateDate;
         @BindView(R.id.tvCreatorName)
         TextView tvCreatorName;
         @BindView(R.id.ivImg31)

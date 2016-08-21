@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.sheepyang.schoolmemory.R;
+import com.sheepyang.schoolmemory.bean.MyUser;
 import com.sheepyang.schoolmemory.bean.Post;
 import com.sheepyang.schoolmemory.util.AppUtil;
 import com.sheepyang.schoolmemory.util.MyToast;
@@ -27,14 +28,14 @@ import de.hdodenhof.circleimageview.CircleImageView;
  * 帖子Item
  * Created by SheepYang on 2016/8/4.
  */
-public class PostAdapter extends BaseAdapter {
+public class TestPostAdapter extends BaseAdapter {
     @BindView(R.id.ivThumb)
     ImageView ivThumb;
     private Context mContext;
     private List<Post> mPostList;
     private int mSize = 5;
 
-    public PostAdapter(Context context, List<Post> postList) {
+    public TestPostAdapter(Context context, List<Post> postList) {
         mContext = context;
         mPostList = postList;
     }
@@ -117,7 +118,7 @@ public class PostAdapter extends BaseAdapter {
      *
      * @param postList
      */
-    public void updataList(List<Post> postList) {
+    public void upDataList(List<Post> postList) {
         mPostList = postList;
         notifyDataSetChanged();
     }

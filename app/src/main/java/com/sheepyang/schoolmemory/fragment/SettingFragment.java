@@ -3,7 +3,7 @@ package com.sheepyang.schoolmemory.fragment;
 import android.widget.ListView;
 
 import com.sheepyang.schoolmemory.R;
-import com.sheepyang.schoolmemory.adapter.PostAdapter;
+import com.sheepyang.schoolmemory.adapter.TestPostAdapter;
 import com.sheepyang.schoolmemory.bean.Post;
 import com.sheepyang.schoolmemory.view.abView.AbPullToRefreshView;
 
@@ -23,7 +23,7 @@ public class SettingFragment extends BaseFragment {
     @BindView(R.id.lvTopic)
     ListView mLvPost;
     private List<Post> mPostList;
-    private PostAdapter mPostAdapter;
+    private TestPostAdapter mTestPostAdapter;
     private int mCurrentPage = 0;//当前页数
     private int mSize = 5;//页数大小
 
@@ -54,16 +54,16 @@ public class SettingFragment extends BaseFragment {
     public void initData() {
         mCurrentPage = 0;
         mPostList = getDataFromBmob(mCurrentPage, mSize);
-        mPostAdapter = new PostAdapter(getActivity(), mPostList);
-        mPostAdapter.setPageSize(5);
-        mLvPost.setAdapter(mPostAdapter);
+        mTestPostAdapter = new TestPostAdapter(getActivity(), mPostList);
+        mTestPostAdapter.setPageSize(5);
+        mLvPost.setAdapter(mTestPostAdapter);
         mAbPullToRefresh.onHeaderRefreshFinish();
     }
 
     private void getMoreData() {
         mCurrentPage++;
         mPostList.addAll(getDataFromBmob(mCurrentPage, mSize));
-        mPostAdapter.upDataList(mPostList);
+        mTestPostAdapter.upDataList(mPostList);
         mAbPullToRefresh.onFooterLoadFinish();
     }
 

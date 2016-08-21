@@ -1,6 +1,9 @@
 package com.sheepyang.schoolmemory.util;
 
+import android.app.Activity;
 import android.content.Context;
+
+import com.sheepyang.schoolmemory.activity.login.LoginActivity;
 
 import cn.bmob.v3.exception.BmobException;
 
@@ -12,7 +15,11 @@ public class ErrorUtil {
         PLog.i(e.toString());
         switch (e.getErrorCode()) {
             case 101:
-                MyToast.showMessage(context, "用户名或密码不正确!");
+                if ((Activity) context instanceof LoginActivity) {
+                    MyToast.showMessage(context, "用户名或密码不正确!");
+                } else {
+                    MyToast.showMessage(context, "没有查询到数据!");
+                }
                 break;
             case 207:
                 MyToast.showMessage(context, "验证码错误!");

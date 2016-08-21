@@ -37,6 +37,10 @@
         <activity
             android:name=".activity.MainActivity"
             android:screenOrientation="portrait" />
+        <!--帖子界面-->
+        <activity
+            android:name=".activity.PostActivity"
+            android:screenOrientation="portrait" />
         <!--登录界面-->
         <activity
             android:name=".activity.login.LoginActivity"

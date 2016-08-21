@@ -28,6 +28,7 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.github.clans.fab.FloatingActionMenu;
 import com.sheepyang.schoolmemory.R;
+import com.sheepyang.schoolmemory.activity.PostActivity;
 import com.sheepyang.schoolmemory.adapter.TopicAdapter;
 import com.sheepyang.schoolmemory.bean.Topic;
 import com.sheepyang.schoolmemory.bean.TopicType;
@@ -144,31 +145,18 @@ public class TopicFragment extends BaseFragment {
         mTopicList = new ArrayList<>();
         mTopicAdapter = new TopicAdapter(getActivity(), mTopicList);
         mLvTopic.setAdapter(mTopicAdapter);
-        mLvTopic.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+        mAbPullToRefresh.setNodata("暂无数据,点击刷新");
+        mAbPullToRefresh.setLoadMoreEnable(false);
+        mLvTopic.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-                final Topic topic = mTopicList.get(i);
-                new MaterialDialog.Builder(getActivity())
-                        .title(topic.getTitle())
-                        .content("确定要删除该话题？")
-                        .positiveText("删除")
-                        .negativeText("取消")
-                        .onPositive(new MaterialDialog.SingleButtonCallback() {
-                            @Override
-                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                deleteTopic(topic);
-                            }
-                        })
-                        .show();
-                return true;
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                showToast("点击了" + i);
+                mIntent = new Intent(getActivity(), PostActivity.class);
+                mIntent.putExtra("Topic", mTopicList.get(i));
+                startActivity(mIntent);
             }
         });
         initListData();
-    }
-
-    private void deleteTopic(Topic topic) {
-        mTopicList.remove(topic);
-        mTopicAdapter.updataList(mTopicList);
     }
 
     private void initListData() {
@@ -219,6 +207,8 @@ public class TopicFragment extends BaseFragment {
                         if (topicList != null && topicList.size() > 0) {
                             mTopicList.addAll(topicList);
                             mTopicAdapter.updataList(mTopicList);
+                            mAbPullToRefresh.setHaveData();
+                            mAbPullToRefresh.setLoadMoreEnable(true);
                         } else {
                             mCurrentPage--;
                             showToast("没有更多内容啦~");
