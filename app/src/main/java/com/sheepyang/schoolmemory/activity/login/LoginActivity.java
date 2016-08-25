@@ -37,8 +37,9 @@ public class LoginActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
+        edtPhone.setText("15659988223");
+        edtPassword.setText("123456");
     }
-
 
     @OnClick({R.id.btnLogin, R.id.tvForget, R.id.btnNext})
     public void onClick(View view) {

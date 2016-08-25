@@ -16,7 +16,6 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
@@ -28,7 +27,7 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.github.clans.fab.FloatingActionMenu;
 import com.sheepyang.schoolmemory.R;
-import com.sheepyang.schoolmemory.activity.PostActivity;
+import com.sheepyang.schoolmemory.activity.PostListActivity;
 import com.sheepyang.schoolmemory.adapter.TopicAdapter;
 import com.sheepyang.schoolmemory.bean.Topic;
 import com.sheepyang.schoolmemory.bean.TopicType;
@@ -57,7 +56,7 @@ import cn.bmob.v3.listener.UploadFileListener;
 /**
  * Created by SheepYang on 2016/8/11.
  */
-public class TopicFragment extends BaseFragment {
+public class TopicListFragment extends BaseFragment {
     private static final int TYPE_INIT_DATA = 0;
     private static final int TYPE_GET_MORE_DATA = 1;
     @BindView(R.id.abPullToRefresh)
@@ -74,7 +73,7 @@ public class TopicFragment extends BaseFragment {
     private EditText edtContentQuestion;
     private ImageView mIvAddImage;
 
-    private static TopicFragment mTopicFragment;
+    private static TopicListFragment mTopicListFragment;
     private List<Topic> mTopicList;
     private TopicAdapter mTopicAdapter;
     private int mCurrentPage = 0;//当前页数
@@ -151,7 +150,7 @@ public class TopicFragment extends BaseFragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 showToast("点击了" + i);
-                mIntent = new Intent(getActivity(), PostActivity.class);
+                mIntent = new Intent(getActivity(), PostListActivity.class);
                 mIntent.putExtra("Topic", mTopicList.get(i));
                 startActivity(mIntent);
             }
@@ -218,6 +217,8 @@ public class TopicFragment extends BaseFragment {
                     mLoadingPD.dismiss();
                     if (type == TYPE_GET_MORE_DATA) {
                         mCurrentPage--;
+                        mAbPullToRefresh.setHaveData();
+                        mAbPullToRefresh.setLoadMoreEnable(true);
                     }
                     ErrorUtil.showErrorCode(getActivity(), e);
                 }
@@ -279,11 +280,11 @@ public class TopicFragment extends BaseFragment {
      *
      * @return
      */
-    public static TopicFragment getInstance() {
-        if (mTopicFragment == null) {
-            mTopicFragment = new TopicFragment();
+    public static TopicListFragment getInstance() {
+        if (mTopicListFragment == null) {
+            mTopicListFragment = new TopicListFragment();
         }
-        return mTopicFragment;
+        return mTopicListFragment;
     }
 
     @Override

@@ -22,7 +22,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.sheepyang.schoolmemory.R;
 import com.sheepyang.schoolmemory.activity.login.LoginActivity;
-import com.sheepyang.schoolmemory.fragment.TopicFragment;
+import com.sheepyang.schoolmemory.fragment.TopicListFragment;
 import com.sheepyang.schoolmemory.fragment.PersonFragment;
 import com.sheepyang.schoolmemory.fragment.SettingFragment;
 import com.sheepyang.schoolmemory.util.AppUtil;
@@ -57,7 +57,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     private Fragment[] mFragments;
     private int currentIndex;//当前Fragment的位置
     private GetPhotoDialog getPhotoDialog;
-    private TopicFragment mTopicFragment;
+    private TopicListFragment mTopicListFragment;
     private PersonFragment mPersonFragment;
     private SettingFragment mSettingFragment;
     private Uri mImageCropUri;
@@ -75,8 +75,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         mDrawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
-                if (TopicFragment.getInstance().mFabMenu.isOpened()) {
-                    TopicFragment.getInstance().mFabMenu.close(true);
+                if (TopicListFragment.getInstance().mFabMenu.isOpened()) {
+                    TopicListFragment.getInstance().mFabMenu.close(true);
                 }
             }
 
@@ -103,11 +103,11 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
      * 初始化Fragment
      */
     private void initFragment() {
-        mTopicFragment = TopicFragment.getInstance();
+        mTopicListFragment = TopicListFragment.getInstance();
         mPersonFragment = PersonFragment.getInstance();
         mSettingFragment = SettingFragment.getInstance();
         mFragments = new Fragment[]{
-                mTopicFragment,
+                mTopicListFragment,
                 mPersonFragment,
                 mSettingFragment
         };
@@ -225,8 +225,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (mTopicFragment != null && mTopicFragment.mIsOnActivityResult) {
-            mTopicFragment.onActivityResult(requestCode, resultCode, data);
+        if (mTopicListFragment != null && mTopicListFragment.mIsOnActivityResult) {
+            mTopicListFragment.onActivityResult(requestCode, resultCode, data);
         } else {
             switch (requestCode) {
                 case Constant.TO_ALUBM:
@@ -325,8 +325,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
     @Override
     public void onBackPressed() {
-        if (TopicFragment.getInstance().mFabMenu.isOpened()) {
-            TopicFragment.getInstance().mFabMenu.close(true);
+        if (TopicListFragment.getInstance().mFabMenu.isOpened()) {
+            TopicListFragment.getInstance().mFabMenu.close(true);
         } else if (mDrawerLayout.isDrawerOpen(Gravity.LEFT)) {
             mDrawerLayout.closeDrawer(Gravity.LEFT);
         } else if (System.currentTimeMillis() - mCurrentTime < 2000) {

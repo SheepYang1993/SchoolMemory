@@ -39,7 +39,7 @@
             android:screenOrientation="portrait" />
         <!--帖子界面-->
         <activity
-            android:name=".activity.PostActivity"
+            android:name=".activity.PostListActivity"
             android:screenOrientation="portrait" />
         <!--登录界面-->
         <activity

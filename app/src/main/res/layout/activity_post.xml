@@ -32,12 +32,14 @@
         android:orientation="horizontal">
 
         <EditText
+            android:id="@+id/edtContext"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:hint="发表新的帖子" />
 
         <Button
+            android:id="@+id/btnSendPost"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="发布" />
